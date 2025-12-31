@@ -220,14 +220,14 @@
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date's Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eYL-0l-v7O">
-                                <rect key="frame" x="137.33333333333334" y="182" width="118.33333333333334" height="25.333333333333343"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Month" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eYL-0l-v7O">
+                                <rect key="frame" x="165.66666666666666" y="182" width="61.666666666666657" height="25.333333333333343"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="22"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Week's Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xSn-ft-2ey">
-                                <rect key="frame" x="133" y="227.33333333333334" width="127.33333333333331" height="26.333333333333343"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Week Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xSn-ft-2ey">
+                                <rect key="frame" x="141.33333333333334" y="227.33333333333334" width="110.66666666666666" height="26.333333333333343"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="22"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -236,36 +236,61 @@
                                 <rect key="frame" x="0.0" y="273.66666666666674" width="393" height="510.33333333333326"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="y8Y-H6-Bks">
-                                    <size key="itemSize" width="128" height="70"/>
+                                    <size key="itemSize" width="233" height="162"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>
                                     <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
                                 </collectionViewFlowLayout>
                                 <cells>
                                     <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="FinancialWeeklyCell" id="F3j-w1-yye" customClass="FinancialWeeklyCVCell" customModule="Assistant_App" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="0.0" width="128" height="70"/>
+                                        <rect key="frame" x="80" y="0.0" width="233" height="162"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="C27-Lx-oOr">
-                                            <rect key="frame" x="0.0" y="0.0" width="128" height="70"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="233" height="162"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Cell Name" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="NlS-aM-4fO">
-                                                    <rect key="frame" x="25" y="0.0" width="78" height="70"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <nil key="textColor"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
+                                                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="5dl-h0-9Pt" customClass="FinancialWeeklyTableView" customModule="Assistant_App" customModuleProvider="target">
+                                                    <rect key="frame" x="0.0" y="0.0" width="233" height="162"/>
+                                                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                                    <prototypes>
+                                                        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="FinancialWeeklyTableCell" rowHeight="95" id="wbU-ui-ItC" customClass="FinancialWeeklyTableViewCell" customModule="Assistant_App" customModuleProvider="target">
+                                                            <rect key="frame" x="0.0" y="50" width="233" height="95"/>
+                                                            <autoresizingMask key="autoresizingMask"/>
+                                                            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="wbU-ui-ItC" id="yLV-ev-wKz">
+                                                                <rect key="frame" x="0.0" y="0.0" width="233" height="95"/>
+                                                                <autoresizingMask key="autoresizingMask"/>
+                                                                <subviews>
+                                                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label Within TableCell" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="99d-UR-IIM">
+                                                                        <rect key="frame" x="16" y="11" width="201" height="73"/>
+                                                                        <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                                        <nil key="textColor"/>
+                                                                        <nil key="highlightedColor"/>
+                                                                    </label>
+                                                                </subviews>
+                                                                <constraints>
+                                                                    <constraint firstAttribute="bottomMargin" secondItem="99d-UR-IIM" secondAttribute="bottom" id="6gM-Vk-UPI"/>
+                                                                    <constraint firstAttribute="trailingMargin" secondItem="99d-UR-IIM" secondAttribute="trailing" id="K3f-Ih-iZ0"/>
+                                                                    <constraint firstItem="99d-UR-IIM" firstAttribute="leading" secondItem="yLV-ev-wKz" secondAttribute="leadingMargin" id="VZn-ab-iQb"/>
+                                                                    <constraint firstItem="99d-UR-IIM" firstAttribute="top" secondItem="yLV-ev-wKz" secondAttribute="topMargin" id="z8l-0E-qja"/>
+                                                                </constraints>
+                                                            </tableViewCellContentView>
+                                                            <connections>
+                                                                <outlet property="transcationLabel" destination="99d-UR-IIM" id="7UX-Y1-Bwd"/>
+                                                            </connections>
+                                                        </tableViewCell>
+                                                    </prototypes>
+                                                </tableView>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="bottom" secondItem="NlS-aM-4fO" secondAttribute="bottom" id="N8Q-Os-Oft"/>
-                                                <constraint firstItem="NlS-aM-4fO" firstAttribute="centerX" secondItem="C27-Lx-oOr" secondAttribute="centerX" id="OEN-fl-C6c"/>
-                                                <constraint firstItem="NlS-aM-4fO" firstAttribute="top" secondItem="C27-Lx-oOr" secondAttribute="top" id="ck2-5U-05V"/>
-                                                <constraint firstItem="NlS-aM-4fO" firstAttribute="centerY" secondItem="C27-Lx-oOr" secondAttribute="centerY" id="q6g-36-uNr"/>
+                                                <constraint firstAttribute="trailing" secondItem="5dl-h0-9Pt" secondAttribute="trailing" id="G5c-m6-BKq"/>
+                                                <constraint firstAttribute="bottom" secondItem="5dl-h0-9Pt" secondAttribute="bottom" id="OTb-eH-KBd"/>
+                                                <constraint firstItem="5dl-h0-9Pt" firstAttribute="top" secondItem="C27-Lx-oOr" secondAttribute="top" id="SOJ-mg-CGC"/>
+                                                <constraint firstItem="5dl-h0-9Pt" firstAttribute="leading" secondItem="C27-Lx-oOr" secondAttribute="leading" id="f3u-dq-dd5"/>
                                             </constraints>
                                         </collectionViewCellContentView>
-                                        <size key="customSize" width="128" height="70"/>
+                                        <size key="customSize" width="233" height="162"/>
                                         <connections>
-                                            <outlet property="financialWeeklyCVCellLabel" destination="NlS-aM-4fO" id="F3F-Ms-zLO"/>
+                                            <outlet property="tableStack" destination="5dl-h0-9Pt" id="AZ2-8D-7L3"/>
                                         </connections>
                                     </collectionViewCell>
                                 </cells>
@@ -318,15 +343,15 @@
                     </view>
                     <navigationItem key="navigationItem" id="gjg-R1-Pcb"/>
                     <connections>
-                        <outlet property="dateLabel" destination="eYL-0l-v7O" id="W9O-WM-15N"/>
                         <outlet property="leftButton" destination="yyY-AU-oP5" id="m1t-Zj-UN3"/>
+                        <outlet property="monthLabel" destination="eYL-0l-v7O" id="bcs-1C-SzT"/>
                         <outlet property="rightButton" destination="X52-JT-xmQ" id="K6Y-e4-FAe"/>
                         <outlet property="weekLabel" destination="xSn-ft-2ey" id="3Js-Yp-UW0"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="06C-Og-9xB" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1925.9541984732823" y="-1582.3943661971832"/>
+            <point key="canvasLocation" x="1119.8473282442749" y="-1630.2816901408451"/>
         </scene>
     </scenes>
     <resources>

@@ -12,7 +12,7 @@ class FinancialWeeklyViewController: UIViewController{
     
     @IBOutlet weak var leftButton: UIButton!
     @IBOutlet weak var rightButton: UIButton!
-    @IBOutlet weak var dateLabel: UILabel!
+    @IBOutlet weak var monthLabel: UILabel!
     @IBOutlet weak var weekLabel: UILabel!
         
     var todayComponents: DateComponents{
@@ -60,7 +60,7 @@ class FinancialWeeklyViewController: UIViewController{
     }
     
     func UpdateWeekLabel(){
-        dateLabel.text = "\(monthString!) \(String(fromDate!))-\(String(toDate!))"
+        monthLabel.text = "\(monthString!)"
         weekLabel.text = "Week \(currentWeekOfMonth) Out of \(lastWeekOfMonth)"
     }
 
@@ -106,18 +106,32 @@ extension Date{
     var endOfMonth: Int{
         Calendar.current.range(of: .day, in: .month, for: self)?.count ?? 0
     }
+    
+    func getHourIndex() -> Int{
+        let hour = Calendar.current.component(.hour, from: self)
+        return hour / 6
+    }
+    
+    
+    func dateBy(days: Int, hours: Int) -> Date {
+        let now = Date()
+        let dayDate = Calendar.current.date(byAdding: .day, value: days, to: now)!
+        return Calendar.current.date(byAdding: .hour, value: hours, to: dayDate)!
+    }
+    
+    func getCurrentDate() -> Int {
+        return Calendar.current.component(.day, from: self)
+    }
+    
+    func getCurrentDays() -> Int{
+        let calendar = Calendar.current
+        var dayNumber = calendar.component(.weekday, from: self)
+        if(dayNumber == 1 ){
+            dayNumber = 7
+        }else{
+            dayNumber -= 1
+        }
+        return dayNumber
+    }
 }
 
-//MARK: - Collection View Extension 
-//extension WeeklyViewController: UICollectionViewDelegate, UICollectionViewDataSource{
-//    
-//    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        return 1
-//    }
-//    
-//    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-//
-//    }
-//    
-//    
-//}
