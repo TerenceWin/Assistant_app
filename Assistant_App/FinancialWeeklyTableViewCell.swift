@@ -9,13 +9,11 @@ import UIKit
 
 class FinancialWeeklyTableViewCell: UITableViewCell {
     
-    @IBOutlet weak var transcationLabel : UILabel!
+    @IBOutlet weak var transactionLabel : UILabel!
     
     override func awakeFromNib() {
         super.awakeFromNib()
-        
-            
-        
+        self.transactionLabel.layer.borderWidth = 0.5
+        self.transactionLabel.layer.borderColor = UIColor.systemGray4.cgColor
     }
-
 }

@@ -226,8 +226,8 @@
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Week Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xSn-ft-2ey">
-                                <rect key="frame" x="141.33333333333334" y="227.33333333333334" width="110.66666666666666" height="26.333333333333343"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Money Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="xSn-ft-2ey">
+                                <rect key="frame" x="135.66666666666666" y="227.33333333333334" width="121.99999999999997" height="26.333333333333343"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="22"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
@@ -250,7 +250,7 @@
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="5dl-h0-9Pt" customClass="FinancialWeeklyTableView" customModule="Assistant_App" customModuleProvider="target">
-                                                    <rect key="frame" x="0.0" y="0.0" width="233" height="162"/>
+                                                    <rect key="frame" x="0.0" y="10" width="233" height="152"/>
                                                     <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                                                     <prototypes>
                                                         <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="FinancialWeeklyTableCell" rowHeight="95" id="wbU-ui-ItC" customClass="FinancialWeeklyTableViewCell" customModule="Assistant_App" customModuleProvider="target">
@@ -261,7 +261,7 @@
                                                                 <autoresizingMask key="autoresizingMask"/>
                                                                 <subviews>
                                                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label Within TableCell" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="99d-UR-IIM">
-                                                                        <rect key="frame" x="16" y="11" width="201" height="73"/>
+                                                                        <rect key="frame" x="16" y="1" width="201" height="83"/>
                                                                         <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                                         <nil key="textColor"/>
                                                                         <nil key="highlightedColor"/>
@@ -271,11 +271,11 @@
                                                                     <constraint firstAttribute="bottomMargin" secondItem="99d-UR-IIM" secondAttribute="bottom" id="6gM-Vk-UPI"/>
                                                                     <constraint firstAttribute="trailingMargin" secondItem="99d-UR-IIM" secondAttribute="trailing" id="K3f-Ih-iZ0"/>
                                                                     <constraint firstItem="99d-UR-IIM" firstAttribute="leading" secondItem="yLV-ev-wKz" secondAttribute="leadingMargin" id="VZn-ab-iQb"/>
-                                                                    <constraint firstItem="99d-UR-IIM" firstAttribute="top" secondItem="yLV-ev-wKz" secondAttribute="topMargin" id="z8l-0E-qja"/>
+                                                                    <constraint firstItem="99d-UR-IIM" firstAttribute="top" secondItem="yLV-ev-wKz" secondAttribute="topMargin" constant="-10" id="z8l-0E-qja"/>
                                                                 </constraints>
                                                             </tableViewCellContentView>
                                                             <connections>
-                                                                <outlet property="transcationLabel" destination="99d-UR-IIM" id="7UX-Y1-Bwd"/>
+                                                                <outlet property="transactionLabel" destination="99d-UR-IIM" id="pHf-JM-8aH"/>
                                                             </connections>
                                                         </tableViewCell>
                                                     </prototypes>
@@ -284,7 +284,7 @@
                                             <constraints>
                                                 <constraint firstAttribute="trailing" secondItem="5dl-h0-9Pt" secondAttribute="trailing" id="G5c-m6-BKq"/>
                                                 <constraint firstAttribute="bottom" secondItem="5dl-h0-9Pt" secondAttribute="bottom" id="OTb-eH-KBd"/>
-                                                <constraint firstItem="5dl-h0-9Pt" firstAttribute="top" secondItem="C27-Lx-oOr" secondAttribute="top" id="SOJ-mg-CGC"/>
+                                                <constraint firstItem="5dl-h0-9Pt" firstAttribute="top" secondItem="C27-Lx-oOr" secondAttribute="top" constant="10" id="SOJ-mg-CGC"/>
                                                 <constraint firstItem="5dl-h0-9Pt" firstAttribute="leading" secondItem="C27-Lx-oOr" secondAttribute="leading" id="f3u-dq-dd5"/>
                                             </constraints>
                                         </collectionViewCellContentView>
@@ -343,10 +343,11 @@
                     </view>
                     <navigationItem key="navigationItem" id="gjg-R1-Pcb"/>
                     <connections>
+                        <outlet property="financialWeeklyCV" destination="IuM-p6-8kO" id="qAO-2E-irV"/>
                         <outlet property="leftButton" destination="yyY-AU-oP5" id="m1t-Zj-UN3"/>
+                        <outlet property="moneyLabel" destination="xSn-ft-2ey" id="rQn-ep-gDJ"/>
                         <outlet property="monthLabel" destination="eYL-0l-v7O" id="bcs-1C-SzT"/>
                         <outlet property="rightButton" destination="X52-JT-xmQ" id="K6Y-e4-FAe"/>
-                        <outlet property="weekLabel" destination="xSn-ft-2ey" id="3Js-Yp-UW0"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="06C-Og-9xB" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

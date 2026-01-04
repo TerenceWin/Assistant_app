@@ -9,10 +9,16 @@ import Foundation
 
 struct MoneyStruct{
     let id = UUID()
-    let amount: Double
+    let amount: Int
     let date: Date
     let type: String //"earn" or "spend"
     let category: String //salary, food, Unspecify
     let note: String? //Description
 }
 
+struct WeeklyKey: Hashable{
+    let year: Int
+    let month: Int
+    let day: Int
+    let hour: Int
+}

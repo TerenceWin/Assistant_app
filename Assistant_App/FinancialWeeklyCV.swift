@@ -8,48 +8,83 @@
 import UIKit
 import Foundation
 
+protocol FinancialWeeklyCVDelegate: AnyObject{
+    func updateMoneyLabel(to text: String)
+}
+
 class FinancialWeeklyCV: UICollectionView, UICollectionViewDelegate, UICollectionViewDataSource {
-    
-    private let days = ["", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
-    private var emptyDates : [String] = ["", "", "", "", "", "", ""]
-    private let hours = ["0am - 6am", "6am - 12pm", "12pm - 18pm", "18pm - 24pm"]
-    
-    private var allTranscations : [MoneyStruct] = [
-        MoneyStruct(amount: 2000, date: Date().dateBy(days: -2, hours: 2), type: "earn", category: "salary", note: "Grocery"),
-        MoneyStruct(amount: 5, date: Date().dateBy(days: -1, hours: 6), type: "spend", category: "food", note: "Coffee"),
-        MoneyStruct(amount: 200, date: Date().dateBy(days: 0, hours: 12), type: "spend", category: "food", note: "Grocery"),
-        MoneyStruct(amount: 200, date: Date().dateBy(days: 1, hours: 4), type: "earn", category: "Mercari", note: ""),
-        MoneyStruct(amount: 2000, date: Date().dateBy(days: 2, hours: 0), type: "spend", category: "Goods", note: "LV Bag"),
-        MoneyStruct(amount: 200, date: Date().dateBy(days: 3, hours: -6), type: "earn", category: "Mercari", note: ""),
-        MoneyStruct(amount: 200, date: Date().dateBy(days: 4, hours: 0), type: "earn", category: "Mercari", note: ""),
-        MoneyStruct(amount: 100, date: Date().dateBy(days: 4, hours: -6), type: "earn", category: "Mercari", note: ""),
-    ]
-    
-    private var groupedTranscations : [String: [MoneyStruct]] = [:]
-    
-    func groupTranscation(){
-        groupedTranscations = [:]
-        for transcation in allTranscations {
-            let transcationDay = transcation.date.getCurrentDays()
-            let transcationHour = transcation.date.getHourIndex()
-            let key = "\(transcationDay)-\(transcationHour)"
-            if groupedTranscations[key] == nil{
-                groupedTranscations[key] = [transcation]
-            }else{
-                groupedTranscations[key]?.append(transcation)
-            }
+        
+    let calendar = Calendar.current
+    weak var financialDelegate : FinancialWeeklyCVDelegate?
+    var weekStartDate: Date = Date() {
+        didSet {
+            updateEmptyDates() //For Header
+            groupCurrentWeekTransactions()
+            UIView.transition(with: self,
+                              duration: 0.35,
+                              options: .transitionCrossDissolve,
+                              animations: {
+                                  self.reloadData()
+                              },
+                              completion: nil)
         }
     }
+    var weekEndDate: Date = Date()
     
+    private let days = ["", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+    private var emptyDates : [Int] = []
+    private let hours = ["0am - 5am", "6am - 11pm", "12pm - 17pm", "18pm - 23pm"]
+    var groupedAllTransactions : [WeeklyKey: [MoneyStruct]] = [:]
+    var currentWeekTransactions : [WeeklyKey: [MoneyStruct]] = [:]{
+        didSet{
+            self.reloadData()
+        }
+    }
+
     static let cellId = "DayCell"
     static let headerId = "HeaderView"
     static let sidebarId = "SidebarView"
     
-    let dateManager = Date()
-    var currentDate : Int = 0
-    var currentDay : Int = 0
-    var lastDate : Int = 0
+    //MARK: - GroupCurrentWeekTransactions and updateHeader() func
+    func groupCurrentWeekTransactions(){
+        currentWeekTransactions.removeAll()
+        var totalMoney : Int = 0
+        let currentWeekStartDateInt = weekStartDate.getDateAsInt()
+        let currentWeekEndDateInt = weekEndDate.getDateAsInt()
+        
+        for (key, value) in groupedAllTransactions{
+            let keyYear = key.year
+            let keyMonth = key.month
+            let keyDay = key.day
+            let keyHour = key.hour
+            
+            let currentKeyInt : Int = (keyYear * 1000000) + (keyMonth * 10000) + (keyDay * 100) + keyHour
+                if currentKeyInt >= currentWeekStartDateInt && currentKeyInt <= currentWeekEndDateInt{
+                    currentWeekTransactions[key, default: []].append(contentsOf: value)
+                    let sumOfThisKey = value.reduce(0){$0 + $1.amount}
+                    totalMoney += sumOfThisKey
+            }
+        }
+        
+        let totalMoneyString = String(totalMoney)
+        financialDelegate?.updateMoneyLabel(to: totalMoneyString)
+
+//        for (key, value) in currentWeekTransactions{
+//            print("Key: \(key), Value: \(value.count)")
+//        }
+    }
     
+    func updateEmptyDates(){
+        emptyDates.removeAll()
+        var tempDate = weekStartDate
+        emptyDates.append(Calendar.current.component(.day, from: tempDate))
+        for _ in 0..<6{
+            tempDate = Calendar.current.date(byAdding: .day, value: 1, to:tempDate)!
+            emptyDates.append(Calendar.current.component(.day, from: tempDate))
+        }
+    }
+ 
+    //MARK: - Init Section
     required init?(coder: NSCoder) {
         super.init(coder: coder)
         commonInit()
@@ -61,71 +96,18 @@ class FinancialWeeklyCV: UICollectionView, UICollectionViewDelegate, UICollectio
         commonInit()
     }
     
+    //MARK: - CommonInit func
     private func commonInit() {
-        currentDate = dateManager.getCurrentDate()
-        currentDay = dateManager.getCurrentDays()
-        lastDate = dateManager.endOfMonth
-
-        let datesFromFirstDate = Int(currentDate) - 1
-        let datesFromLastDate = Int(Int(lastDate) - Int(currentDate))
-        
-        let daysFromMonday = Int(currentDay) - 1
-        let daysFromSunday = 7 - Int(currentDay)
-        
-        //Use to set the first day in the calendar and increment with for loop
-        var firstDateInTheWeek = currentDate - (currentDay - 1 )
-
-//        print("datesFromFirstDate: \(datesFromFirstDate)")
-//        print("datesFromLastDate: \(datesFromLastDate)")
-//        
-//        print("daysFromMonday: \(daysFromMonday)")
-//        print("daysFromSunday: \(daysFromSunday)")
-
-        if datesFromFirstDate >= daysFromMonday && datesFromLastDate >= daysFromSunday{ //The weekdays are filled
-            for i in 0..<emptyDates.count{
-                emptyDates[i] = String(firstDateInTheWeek)
-                firstDateInTheWeek += 1
-            }
-        }else{ //There exist empty day
-            if daysFromMonday > datesFromFirstDate{ //Empty Monday until [daysFromMonday - datesFromFirstDate]
-                let emptyDays = daysFromMonday - datesFromFirstDate
-                var tempDay = 1
-
-                for i in emptyDays..<emptyDates.count{
-                    emptyDates[i] = String(tempDay)
-                    tempDay += 1
-                }
-            }
-            if daysFromSunday > datesFromLastDate{ //Empty Sunday until [daysFromSunday - datesFromLastDate]
-                let emptyDays = daysFromSunday - datesFromLastDate
-                for i in 0..<(emptyDates.count - emptyDays){
-                    emptyDates[i] = String(firstDateInTheWeek)
-                    firstDateInTheWeek += 1
-                }
-                        
-            }
-        }
-        
-        groupTranscation()
-        print(groupedTranscations)
-        
-//        for transcation in groupedTranscations{
-//            let key = transcation.key
-//            let value = transcation.value
-//            print("\(key)-\(value)")
-//        }
-        
         //CV Grid Layout
+
         self.collectionViewLayout = createCalendarLayout()
-        
         self.delegate = self
         self.dataSource = self
         
         self.register(UICollectionViewCell.self, forCellWithReuseIdentifier: FinancialWeeklyCV.cellId)
-        
         self.register(FinancialWeeklyDaysHeaderView.self, forSupplementaryViewOfKind: "days-header-kind", withReuseIdentifier: FinancialWeeklyCV.headerId)
-        
         self.register(FinancialWeeklyHoursSideBarView.self, forSupplementaryViewOfKind: "time-sidebar-kind", withReuseIdentifier: FinancialWeeklyCV.sidebarId)
+        
     }
 
     // MARK: - DataSource: Items (The Grid)
@@ -136,25 +118,30 @@ class FinancialWeeklyCV: UICollectionView, UICollectionViewDelegate, UICollectio
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FinancialWeeklyCell", for: indexPath) as? FinancialWeeklyCVCell else {
-            return UICollectionViewCell() // Fallback to avoid a crash
+            return UICollectionViewCell()
         }
         
-        let numOfCol = 7
-        let columIndex = indexPath.item % numOfCol
-        let rowIndex = indexPath.item / numOfCol
-        
-        let key = "\(columIndex + 1)-\(rowIndex)"
-                        
-        cell.layer.borderWidth = 0.5
-        cell.layer.borderColor = UIColor.systemGray4.cgColor
-        
-        cell.transcationsPerCell = groupedTranscations[key] ?? []
-       
+        let column = indexPath.item % 7
+        let row = indexPath.item / 7
+
+            if let targetDate = calendar.date(byAdding: .day, value: column, to: weekStartDate) {
+                let comp = calendar.dateComponents([.year, .month, .day], from: targetDate)
+                
+                let columnKey = WeeklyKey(
+                    year: comp.year!,
+                    month: comp.month!,
+                    day: comp.day!,
+                    hour: row
+                )
+                
+                cell.transactionsPerCell = currentWeekTransactions[columnKey] ?? []
+            }
+
         return cell
     }
     
 
-    // MARK: - Layout
+    // MARK: - CV's Layout
     func createCalendarLayout() -> UICollectionViewLayout {
         let layout = UICollectionViewCompositionalLayout { (sectionIndex, layoutEnvironment) -> NSCollectionLayoutSection? in
             
@@ -187,10 +174,8 @@ class FinancialWeeklyCV: UICollectionView, UICollectionViewDelegate, UICollectio
                 count: 7
             )
             
-            group.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 60, bottom: 0, trailing: 0)
-            
+            group.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 60, bottom: 0, trailing: 0)  
             let section = NSCollectionLayoutSection(group: group)
-
             section.boundarySupplementaryItems = [header, sideBar]
             return section
         }
@@ -204,10 +189,11 @@ class FinancialWeeklyCV: UICollectionView, UICollectionViewDelegate, UICollectio
             let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: FinancialWeeklyCV.headerId, for: indexPath) as! FinancialWeeklyDaysHeaderView
             var newDays = days
            
-            for i in 1..<newDays.count{
-                newDays[i] = "\(newDays[i]) \(emptyDates[i - 1])"
+            if emptyDates.count == 7{
+                for i in 1..<newDays.count{
+                    newDays[i] = "\(newDays[i]) \(emptyDates[i - 1])"
+                }
             }
-            
             header.configure(titles: newDays)
             return header
         }
@@ -217,9 +203,7 @@ class FinancialWeeklyCV: UICollectionView, UICollectionViewDelegate, UICollectio
             sidebar.configure(titles: hours)
             return sidebar
         }
-        
         return UICollectionReusableView()
     }
     
 }
-

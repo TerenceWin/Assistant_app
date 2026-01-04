@@ -13,95 +13,167 @@ class FinancialWeeklyViewController: UIViewController{
     @IBOutlet weak var leftButton: UIButton!
     @IBOutlet weak var rightButton: UIButton!
     @IBOutlet weak var monthLabel: UILabel!
-    @IBOutlet weak var weekLabel: UILabel!
+    @IBOutlet weak var moneyLabel: UILabel!
+    
+    var currentStartDate: Date = Date(){
+        didSet {
+            UIView.transition(with: self.monthLabel,
+                              duration: 0.35,
+                              options: .transitionCrossDissolve,
+                              animations: {},
+                              completion: nil)
+            UIView.transition(with: self.moneyLabel,
+                              duration: 0.35,
+                              options: .transitionCrossDissolve,
+                              animations: {},
+                              completion: nil
+            )
+        }
+    }
+    
+    var weekStartDate = Date()
+    var weekEndDate = Date()
+    private var calendar = Calendar.current
+    var totalMoney : Int = 0
+    
+    @IBOutlet weak var financialWeeklyCV : FinancialWeeklyCV!
+    
+    private var allTransactions : [MoneyStruct] = [
+        MoneyStruct(amount: -70, date: Date().dateBy(days: -7, hours: 0), type: "earn", category: "salary", note: "Grocery"),
+        MoneyStruct(amount: -60, date: Date().dateBy(days: -6, hours: 0), type: "earn", category: "salary", note: "Grocery"),
+        MoneyStruct(amount: -50, date: Date().dateBy(days: -5, hours: 0), type: "earn", category: "salary", note: "Grocery"),
+        MoneyStruct(amount: -40, date: Date().dateBy(days: -4, hours: 0), type: "earn", category: "salary", note: "Grocery"),
+        MoneyStruct(amount: -30, date: Date().dateBy(days: -3, hours: 0), type: "earn", category: "salary", note: "Grocery"),
+        MoneyStruct(amount: -20, date: Date().dateBy(days: -2, hours: 0), type: "earn", category: "salary", note: "Grocery"),
+        MoneyStruct(amount: -10, date: Date().dateBy(days: -1, hours: 0), type: "spend", category: "food", note: "Coffee"),
+        MoneyStruct(amount: 10, date: Date().dateBy(days: 0, hours: 0), type: "spend", category: "food", note: "Grocery"),
+        MoneyStruct(amount: 1000, date: Date().dateBy(days: 0, hours: 0), type: "spend", category: "food", note: "Grocery"),
+        MoneyStruct(amount: 100000, date: Date().dateBy(days: 0, hours: 0), type: "spend", category: "food", note: "Grocery"),
+        MoneyStruct(amount: 0, date: Date().dateBy(days: 0, hours: 6), type: "spend", category: "food", note: "Grocery"),
+        MoneyStruct(amount: 0, date: Date().dateBy(days: 0, hours: 12), type: "spend", category: "food", note: "Grocery"),
+        MoneyStruct(amount: 0, date: Date().dateBy(days: 0, hours: 18), type: "spend", category: "food", note: "Grocery"),
+        MoneyStruct(amount: 0, date: Date().dateBy(days: 0, hours: 24), type: "spend", category: "food", note:   "Grocery"),
+        MoneyStruct(amount: 10, date: Date().dateBy(days: 1, hours: 0), type: "earn", category: "Mercari", note: ""),
+        MoneyStruct(amount: 20, date: Date().dateBy(days: 2, hours: 0), type: "spend", category: "Goods", note: "LV Bag"),
+        MoneyStruct(amount: 30, date: Date().dateBy(days: 3, hours: 0), type: "earn", category: "Mercari", note: ""),
+        MoneyStruct(amount: 40, date: Date().dateBy(days: 4, hours: 0), type: "earn", category: "Mercari", note: ""),
+        MoneyStruct(amount: 50, date: Date().dateBy(days: 5, hours: 0), type: "earn", category: "salary", note: "Grocery"),
+        MoneyStruct(amount: 60, date: Date().dateBy(days: 6, hours: 0), type: "earn", category: "salary", note: "Grocery"),
+        MoneyStruct(amount: 70, date: Date().dateBy(days: 7, hours: 0), type: "earn", category: "salary", note: "Grocery"),
+
+        ]
+    
+    var groupedTransactions : [WeeklyKey: [MoneyStruct]] = [:]
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        financialWeeklyCV.financialDelegate = self
         
-    var todayComponents: DateComponents{
-        Calendar.current.dateComponents([.year, .month, .day], from: Date())
+        groupAllTransactions(transactions: allTransactions)
+        UpdateWeekLabel()
     }
     
-    var year : Int? {todayComponents.year}
-    var month : Int? {todayComponents.month}
-    var fromDate: Int? = Calendar.current.component(.day, from: Date())
-    var toDate: Int? {
-        guard let fromDate, let end = endDateOfMonth else { return nil }
-        return min(fromDate + 6, end)
+    var monthString: String{
+        currentStartDate.formatted(.dateTime.month(.wide))
     }
     
-    var monthString : String? {
-        guard let month else{ return nil }
-        return numToMonth(num: month)
+    var year: Int{
+        return calendar.component(.year, from: currentStartDate)
     }
     
-    var date = Date()
-    var endDateOfMonth: Int? {
-        Calendar.current.range(of: .day, in: .month, for: date)!.count
-    }
-
-    var currentWeekOfMonth: Int {
-        Int(ceil(Double(toDate!) / 7.0))
-    }
-
-    var lastWeekOfMonth: Int {
-        Int(ceil(Double(endDateOfMonth!) / 7.0))
+    var month: Int{
+        return calendar.component(.month, from: currentStartDate)
     }
     
     @IBAction func previousWeekPressed(_ sender: UIButton) {
-        guard fromDate! > 1 else { return }
-
-        fromDate = max(fromDate! - 7, 1)
-        UpdateWeekLabel()
+        if let lastWeek = calendar.date(byAdding: .day, value: -7, to: currentStartDate){
+            currentStartDate = lastWeek
+            UpdateWeekLabel()
+        }
     }
     
     @IBAction func nextWeekPressed(_ sender: UIButton) {
-        guard toDate! < endDateOfMonth! else { return }
-
-        fromDate = toDate! + 1
-        UpdateWeekLabel()
+        if let nextWeek = calendar.date(byAdding: .day, value: 7, to: currentStartDate){
+            currentStartDate = nextWeek
+            UpdateWeekLabel()
+        }
+    }
+    
+    
+    
+    //MARK: - GroupAllTransactions, GetWeekRange and UpdateLabels func
+    func groupAllTransactions(transactions: [MoneyStruct]){
+        for transaction in transactions {
+            let date = calendar.dateComponents([.year, .month, .day, .hour], from: transaction.date)
+            let yearIndex = date.year!
+            let monthIndex = date.month!
+            let dateIndex = date.day!
+            let hourIndex = date.hour! / 6
+            
+            let key = WeeklyKey(year: yearIndex, month: monthIndex, day: dateIndex, hour: hourIndex)
+            if groupedTransactions[key] == nil{
+                groupedTransactions[key] = [transaction]
+            }else{
+                groupedTransactions[key]?.append(transaction)
+            }
+        }
+        
+        financialWeeklyCV.groupedAllTransactions = groupedTransactions
+//        for (key, value) in groupedTransactions{
+//            print("Key: \(key), Value: \(value.count)")
+//        }
+    }
+    
+    func getWeekRange(for date: Date) ->(start: Date, end: Date)?{
+        let localDate = calendar.startOfDay(for: date)
+        guard let range = calendar.dateInterval(of: .weekOfYear, for: localDate) else{
+            return nil
+        }
+        
+        let start = range.start
+        guard let end = calendar.date(byAdding: .day, value: 6, to: start) else {
+            return nil
+        }
+        
+        let endOfDay = calendar.date(bySettingHour: 23, minute: 59, second: 59, of: end)!
+        
+        self.weekStartDate = start
+        self.weekEndDate = endOfDay
+                
+        financialWeeklyCV.weekEndDate = endOfDay
+        financialWeeklyCV.weekStartDate = start
+        
+        return (start, endOfDay)
     }
     
     func UpdateWeekLabel(){
-        monthLabel.text = "\(monthString!)"
-        weekLabel.text = "Week \(currentWeekOfMonth) Out of \(lastWeekOfMonth)"
-    }
+        guard let range = getWeekRange(for: currentStartDate) else{
+            return
+        }
+        
+        let startDate = Calendar.current.component(.day, from: range.start)
+        let endDate = Calendar.current.component(.day, from: range.end)
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .ordinal
+        
+        let startString = formatter.string(from: NSNumber(value: startDate)) ?? "\(startDate)"
+        let endString = formatter.string(from: NSNumber(value: endDate)) ?? "\(endDate)"
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        let _ = endDateOfMonth
-        UpdateWeekLabel()
+        monthLabel.text = "\(monthString), \(startString) - \(endString)"
+        moneyLabel.text = "¥\(totalMoney)"
+    }
+}
+
+//MARK: - UpdateMoneyLabel Extension
+extension FinancialWeeklyViewController: FinancialWeeklyCVDelegate{
+    func updateMoneyLabel(to text: String) {
+        DispatchQueue.main.async {
+                self.moneyLabel.text = "¥\(text)"
+            }
     }
 }
     
-    func numToMonth(num: Int) -> String{
-        switch num {
-        case 1:
-            return "January"
-        case 2:
-            return "Fabruary"
-        case 3:
-            return "March"
-        case 4:
-            return "April"
-        case 5:
-            return "May"
-        case 6:
-            return "June"
-        case 7:
-            return "July"
-        case 8:
-            return "August"
-        case 9:
-            return "September"
-        case 10:
-            return "October"
-        case 11:
-            return "November"
-        case 12:
-            return "December"
-        default:
-            return "Wtf? "
-        }
-    }
-//MARK: - Date Extension to get last date of Month
+//MARK: - Date Extension
 extension Date{
     var endOfMonth: Int{
         Calendar.current.range(of: .day, in: .month, for: self)?.count ?? 0
@@ -132,6 +204,18 @@ extension Date{
             dayNumber -= 1
         }
         return dayNumber
+    }
+    
+    func getDateAsInt() -> Int{
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.year, .month, .day, .hour], from: self)
+        
+        let yyyy = components.year ?? 0
+        let mm = components.month ?? 0
+        let dd = components.day ?? 0
+        let hh = components.hour ?? 0
+            
+        return (yyyy * 1000000) + (mm * 10000) + (dd * 100) + hh
     }
 }
 
