@@ -37,40 +37,34 @@ class FinancialWeeklyViewController: UIViewController{
     var totalMoney : Int = 0
     
     @IBOutlet weak var financialWeeklyCV : FinancialWeeklyCV!
-    
-    private var allTransactions : [MoneyStruct] = [
-        MoneyStruct(amount: -70, date: Date().dateBy(days: -7, hours: 0), type: "earn", category: "salary", note: "Grocery"),
-        MoneyStruct(amount: -60, date: Date().dateBy(days: -6, hours: 0), type: "earn", category: "salary", note: "Grocery"),
-        MoneyStruct(amount: -50, date: Date().dateBy(days: -5, hours: 0), type: "earn", category: "salary", note: "Grocery"),
-        MoneyStruct(amount: -40, date: Date().dateBy(days: -4, hours: 0), type: "earn", category: "salary", note: "Grocery"),
-        MoneyStruct(amount: -30, date: Date().dateBy(days: -3, hours: 0), type: "earn", category: "salary", note: "Grocery"),
-        MoneyStruct(amount: -20, date: Date().dateBy(days: -2, hours: 0), type: "earn", category: "salary", note: "Grocery"),
-        MoneyStruct(amount: -10, date: Date().dateBy(days: -1, hours: 0), type: "spend", category: "food", note: "Coffee"),
-        MoneyStruct(amount: 10, date: Date().dateBy(days: 0, hours: 0), type: "spend", category: "food", note: "Grocery"),
-        MoneyStruct(amount: 1000, date: Date().dateBy(days: 0, hours: 0), type: "spend", category: "food", note: "Grocery"),
-        MoneyStruct(amount: 100000, date: Date().dateBy(days: 0, hours: 0), type: "spend", category: "food", note: "Grocery"),
-        MoneyStruct(amount: 0, date: Date().dateBy(days: 0, hours: 6), type: "spend", category: "food", note: "Grocery"),
-        MoneyStruct(amount: 0, date: Date().dateBy(days: 0, hours: 12), type: "spend", category: "food", note: "Grocery"),
-        MoneyStruct(amount: 0, date: Date().dateBy(days: 0, hours: 18), type: "spend", category: "food", note: "Grocery"),
-        MoneyStruct(amount: 0, date: Date().dateBy(days: 0, hours: 24), type: "spend", category: "food", note:   "Grocery"),
-        MoneyStruct(amount: 10, date: Date().dateBy(days: 1, hours: 0), type: "earn", category: "Mercari", note: ""),
-        MoneyStruct(amount: 20, date: Date().dateBy(days: 2, hours: 0), type: "spend", category: "Goods", note: "LV Bag"),
-        MoneyStruct(amount: 30, date: Date().dateBy(days: 3, hours: 0), type: "earn", category: "Mercari", note: ""),
-        MoneyStruct(amount: 40, date: Date().dateBy(days: 4, hours: 0), type: "earn", category: "Mercari", note: ""),
-        MoneyStruct(amount: 50, date: Date().dateBy(days: 5, hours: 0), type: "earn", category: "salary", note: "Grocery"),
-        MoneyStruct(amount: 60, date: Date().dateBy(days: 6, hours: 0), type: "earn", category: "salary", note: "Grocery"),
-        MoneyStruct(amount: 70, date: Date().dateBy(days: 7, hours: 0), type: "earn", category: "salary", note: "Grocery"),
-
-        ]
-    
     var groupedTransactions : [WeeklyKey: [MoneyStruct]] = [:]
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
         financialWeeklyCV.financialDelegate = self
-        
-        groupAllTransactions(transactions: allTransactions)
         UpdateWeekLabel()
+        
+        TransactionManager.shared.loadData{ [weak self] in
+            DispatchQueue.main.async{
+                guard let self = self else{
+                    print("Empty DataBase or error while fetching")
+                    return }
+                self.groupAllTransactions(transactions: TransactionManager.shared.allTransactions)
+                self.financialWeeklyCV.reloadData()
+                
+                print("Successfully loaded \(TransactionManager.shared.allTransactions.count) items")
+//                TransactionManager.shared.printAllTransactions()
+            }
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?){
+        if segue.identifier == "goToEditView"{
+            if let editVC = segue.destination as? FinancialWeeklyEditView{
+                editVC.delegate = self
+            }
+        }
     }
     
     var monthString: String{
@@ -103,6 +97,7 @@ class FinancialWeeklyViewController: UIViewController{
     
     //MARK: - GroupAllTransactions, GetWeekRange and UpdateLabels func
     func groupAllTransactions(transactions: [MoneyStruct]){
+        groupedTransactions = [:]
         for transaction in transactions {
             let date = calendar.dateComponents([.year, .month, .day, .hour], from: transaction.date)
             let yearIndex = date.year!
@@ -119,9 +114,9 @@ class FinancialWeeklyViewController: UIViewController{
         }
         
         financialWeeklyCV.groupedAllTransactions = groupedTransactions
-//        for (key, value) in groupedTransactions{
-//            print("Key: \(key), Value: \(value.count)")
-//        }
+        for (key, value) in groupedTransactions{
+            print("Key: \(key), Value: \(value.count)")
+        }
     }
     
     func getWeekRange(for date: Date) ->(start: Date, end: Date)?{
@@ -172,6 +167,22 @@ extension FinancialWeeklyViewController: FinancialWeeklyCVDelegate{
             }
     }
 }
+
+//MARK: - Adding new Transaction
+extension FinancialWeeklyViewController: reloadFinanciallWeeklyVCDelegate{
+    func addedTransaction() {
+        TransactionManager.shared.loadData{ [weak self] in
+            guard let self = self else{return}
+            DispatchQueue.main.async{
+                self.groupAllTransactions(transactions: TransactionManager.shared.allTransactions)
+                self.financialWeeklyCV.reloadData()
+                print("Successfully fetched New Transaction")
+            }
+        }
+    }
+}
+
+
     
 //MARK: - Date Extension
 extension Date{
@@ -218,4 +229,3 @@ extension Date{
         return (yyyy * 1000000) + (mm * 10000) + (dd * 100) + hh
     }
 }
-

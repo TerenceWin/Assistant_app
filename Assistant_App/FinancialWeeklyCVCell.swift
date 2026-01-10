@@ -15,7 +15,6 @@ import Foundation
 class FinancialWeeklyCVCell: UICollectionViewCell {
     
     @IBOutlet weak var tableStack : UITableView!
-    
     private var sortedTransactions: [MoneyStruct] = []
     
     var transactionsPerCell : [MoneyStruct] = [] {
@@ -61,23 +60,22 @@ extension FinancialWeeklyCVCell: UITableViewDelegate, UITableViewDataSource{
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableStack.dequeueReusableCell(withIdentifier: "FinancialWeeklyTableCell", for: indexPath) as! FinancialWeeklyTableViewCell
-                        
-        cell.transactionLabel.text = "¥" + String(sortedTransactions[indexPath.row].amount)
-        let money = sortedTransactions[indexPath.row].amount
         
-        if money > 0 {
+        cell.selectionStyle = .none
+        cell.transactionLabel.text = "¥" + String(sortedTransactions[indexPath.row].amount)
+        let type = sortedTransactions[indexPath.row].type
+        
+        if type == "earn" {
             cell.transactionLabel.backgroundColor = UIColor(red: 60/255, green: 255/255, blue: 60/255, alpha: 1.0)
             cell.transactionLabel.textColor = .black
-        }else if money < 0{
+        }else{
             cell.transactionLabel.backgroundColor = UIColor(red: 255/255, green: 90/255, blue: 95/255, alpha: 1.0)
             cell.transactionLabel.textColor = .white
-        }else{
-            cell.transactionLabel.backgroundColor = .systemGray4
-            cell.transactionLabel.textColor = .black
         }
         
         cell.transactionLabel.layer.cornerRadius = 5.0
         cell.transactionLabel.clipsToBounds = true
+        
         return cell
         
     }

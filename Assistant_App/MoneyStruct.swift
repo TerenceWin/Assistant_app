@@ -7,18 +7,28 @@
 
 import Foundation
 
-struct MoneyStruct{
-    let id = UUID()
-    let amount: Int
-    let date: Date
-    let type: String //"earn" or "spend"
-    let category: String //salary, food, Unspecify
-    let note: String? //Description
+struct MoneyStruct: Codable{
+    var id : String = UUID().uuidString
+    var amount: Int
+    var date: Date
+    var type: String //"earn" or "spend"
+    var category: String //salary, food, Unspecify
+    var note: String? //Description
 }
 
-struct WeeklyKey: Hashable{
+struct WeeklyKey: Hashable, Codable{
     let year: Int
     let month: Int
     let day: Int
     let hour: Int
+}
+
+struct K{
+    static let collectionName = "transaction"
+    static let transactionID = "id"
+    static let transactionamount = "amount"
+    static let transactionDate = "date"
+    static let transactionType = "type"
+    static let transactionCategory = "category"
+    static let transactionNote = "note"
 }

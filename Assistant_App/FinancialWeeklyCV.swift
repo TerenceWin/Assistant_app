@@ -34,7 +34,12 @@ class FinancialWeeklyCV: UICollectionView, UICollectionViewDelegate, UICollectio
     private let days = ["", "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
     private var emptyDates : [Int] = []
     private let hours = ["0am - 5am", "6am - 11pm", "12pm - 17pm", "18pm - 23pm"]
-    var groupedAllTransactions : [WeeklyKey: [MoneyStruct]] = [:]
+    var groupedAllTransactions : [WeeklyKey: [MoneyStruct]] = [:] {
+        didSet{
+            groupCurrentWeekTransactions()
+            self.reloadData()
+        }
+    }
     var currentWeekTransactions : [WeeklyKey: [MoneyStruct]] = [:]{
         didSet{
             self.reloadData()
