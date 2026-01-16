@@ -16,6 +16,7 @@ class FinancialWeeklyEditView: UIViewController{
     private var earnCategoryArr : [String] = ["salary", "business", "side hustles", "bonus", "others"]
     private var spendCategoryArr : [String] = ["grocery", "drinks", "eat out", "transport", "goods", "fee", "subscriptions", "fun", "toiletry", "unknown"]
     private var currentCategoryArr : [String]?
+    var isNew : Bool = false
     var delegate : reloadFinanciallWeeklyVCDelegate?
     
     @IBOutlet weak var earnButton: UIButton!
@@ -26,63 +27,116 @@ class FinancialWeeklyEditView: UIViewController{
     @IBOutlet weak var categoryContainer: UIView!
     @IBOutlet weak var categoryCV: UICollectionView!
     @IBOutlet weak var currentTime: UIDatePicker!
-
-    var earnIsTrue : Bool = false
+    
+    var amount : Int = 0
     var dateTime = Date()
-    var currentSelectedCategory : String?
-    var currentNoteDescription: String?
+    var currentSelectedCategory : String = ""
+    var currentNoteDescription: String = ""
+    var earnIsTrue : Bool = false
+    
+    var currentTransaction : MoneyStruct? {
+        didSet{
+            amount = currentTransaction?.amount ?? 0
+            dateTime = currentTransaction?.date ?? Date()
+            earnIsTrue = currentTransaction?.type == "earn"
+            currentSelectedCategory = currentTransaction?.category ?? ""
+            currentNoteDescription = currentTransaction?.note ?? ""
+            print(self.currentTransaction)
+        }
+    }
+    
+    func updateUI(){
+        moneyText.text = "\(amount)"
+        currentTime.date = dateTime
+        updateTypeButtonUI()
+        noteDescription.text = currentNoteDescription
+    }
+    
+    func updateTypeButtonUI(){
+        if earnIsTrue{
+            earnButton.layer.cornerRadius = 5
+            earnButton.layer.borderWidth = 3.0
+            spendButton.layer.borderWidth = 0
+        }else{
+            spendButton.layer.cornerRadius = 5
+            earnButton.layer.borderWidth = 0
+            spendButton.layer.borderWidth = 3.0
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        updateUI()
         setUpView()
         categoryContainer.layer.borderWidth = 1.0
-        
-        dateTime = currentTime.date
-        noteDescription.delegate = self
-        noteDescription.text = "Type your notes here..."
-        noteDescription.textColor = UIColor.lightGray
     }
+    
+    @IBAction func amountChange(_ sender: UITextField){
+        if let text = sender.text, let newAmount = Int(text){
+            self.amount = newAmount
+        }else{
+            self.amount = 0
+        }
+    }
+    
     
     @IBAction func dateChange(_ sender: UIDatePicker){
         self.dateTime = sender.date
-        print("Date change")
     }
     
     @IBAction func earnButtonPressed(){
         earnIsTrue = true
-        earnButton.layer.cornerRadius = 5
-        earnButton.layer.borderWidth = 3.0
-        spendButton.layer.borderWidth = 0
+        updateTypeButtonUI()
         setUpView()
     }
     
     @IBAction func spendButtonPressed(){
         earnIsTrue = false
-        spendButton.layer.cornerRadius = 5
-        earnButton.layer.borderWidth = 0
-        spendButton.layer.borderWidth = 3.0
+        updateTypeButtonUI()
         setUpView()
     }
     
     @IBAction func saveButtonPressed(){
-        if currentSelectedCategory == nil{
+        if currentSelectedCategory == ""{
             print("Please select a Category")
-        }else{
-            let newTransaction = MoneyStruct(
-                amount: Int(moneyText.text ?? "0") ?? 0,
-                date: dateTime,
-                type: earnIsTrue ? "earn" : "spend",
-                category: currentSelectedCategory!,
-                note: currentNoteDescription ?? ""
-            )
-            TransactionManager.shared.addTransaction(newTransaction) {[weak self] success in
-                if success{
-                    DispatchQueue.main.async{
-                        self?.delegate?.addedTransaction()
-                        self?.navigationController?.popViewController(animated: true)
-                    }
-                }
+            return
+        }
+        
+        var noteToSave = ""
+        if noteDescription.text != "Type your notes here..." && noteDescription.textColor != .lightGray{
+            noteToSave = noteDescription.text
+        }
+        
+        print("Saving Transaction with ID: \(currentTransaction?.id ?? "NEW_ID")")
+        
+        let transaction = MoneyStruct(
+            id : currentTransaction?.id ?? UUID().uuidString,
+            amount: self.amount,
+            date: self.dateTime,
+            type: earnIsTrue ? "earn" : "spend",
+            category: currentSelectedCategory,
+            note: noteToSave
+        )
+        
+        if isNew{   //NEW TRANSACTION -> Add
+            print("This is New Transaction")
+            TransactionManager.shared.addTransaction(transaction) {[weak self] success in
+                self?.handleCompletion(success)
+            }}
+        else{       //OLD TRANSACTION -> Edit
+            print("This is Old Transaction")
+            TransactionManager.shared.editTransaction(transaction) { [weak self] success in
+                self?.handleCompletion(success)
+            }
+        }
+    }
+    
+    
+    private func handleCompletion(_ success: Bool){
+        if success{
+            DispatchQueue.main.async{
+                self.delegate?.addedTransaction()
+                self.navigationController?.popViewController(animated: true)
             }
         }
     }
@@ -112,6 +166,7 @@ class FinancialWeeklyEditView: UIViewController{
         return UICollectionViewCompositionalLayout(section: section)
     }
 }
+
 //MARK: - CV Delegates
 extension FinancialWeeklyEditView: UICollectionViewDataSource, UICollectionViewDelegate{
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -123,11 +178,19 @@ extension FinancialWeeklyEditView: UICollectionViewDataSource, UICollectionViewD
 
         cell.categoryCellImage.layer.borderWidth = 0.5
         cell.categoryCellLabel.text = currentCategoryArr?[indexPath.item]
+        
+        if currentSelectedCategory == currentCategoryArr?[indexPath.item]{
+            cell.categoryCellImage.backgroundColor = UIColor.lightGray
+        }else{
+            cell.categoryCellImage.backgroundColor = .none
+        }
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        currentSelectedCategory = currentCategoryArr?[indexPath.item]
+        guard let currentCategory = currentCategoryArr?[indexPath.item] else{ return }
+        currentSelectedCategory = currentCategory
+        categoryCV.reloadData()
     }
 }
 

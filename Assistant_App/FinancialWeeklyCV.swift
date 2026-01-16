@@ -58,25 +58,24 @@ class FinancialWeeklyCV: UICollectionView, UICollectionViewDelegate, UICollectio
         let currentWeekEndDateInt = weekEndDate.getDateAsInt()
         
         for (key, value) in groupedAllTransactions{
-            let keyYear = key.year
-            let keyMonth = key.month
-            let keyDay = key.day
-            let keyHour = key.hour
-            
-            let currentKeyInt : Int = (keyYear * 1000000) + (keyMonth * 10000) + (keyDay * 100) + keyHour
-                if currentKeyInt >= currentWeekStartDateInt && currentKeyInt <= currentWeekEndDateInt{
-                    currentWeekTransactions[key, default: []].append(contentsOf: value)
-                    let sumOfThisKey = value.reduce(0){$0 + $1.amount}
-                    totalMoney += sumOfThisKey
+            let currentKeyInt = (key.year * 1000000) + (key.month * 10000) + (key.day * 100) + key.hour
+            if currentKeyInt >= currentWeekStartDateInt && currentKeyInt <= currentWeekEndDateInt {
+                currentWeekTransactions[key] = value
+                
+                for transaction in value{
+                    if transaction.type == "earn"{
+                        totalMoney += transaction.amount
+                    }else{
+                        totalMoney -= transaction.amount
+                    }
+                }
             }
+            //        for (key, value) in currentWeekTransactions{
+            //            print("Key: \(key), Value: \(value.count)")
+            //        }
         }
-        
         let totalMoneyString = String(totalMoney)
         financialDelegate?.updateMoneyLabel(to: totalMoneyString)
-
-//        for (key, value) in currentWeekTransactions{
-//            print("Key: \(key), Value: \(value.count)")
-//        }
     }
     
     func updateEmptyDates(){
@@ -125,6 +124,7 @@ class FinancialWeeklyCV: UICollectionView, UICollectionViewDelegate, UICollectio
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FinancialWeeklyCell", for: indexPath) as? FinancialWeeklyCVCell else {
             return UICollectionViewCell()
         }
+        cell.delegate = self.financialDelegate as? FinancialWeeklyCVCellDelegate
         
         let column = indexPath.item % 7
         let row = indexPath.item / 7
@@ -138,10 +138,8 @@ class FinancialWeeklyCV: UICollectionView, UICollectionViewDelegate, UICollectio
                     day: comp.day!,
                     hour: row
                 )
-                
                 cell.transactionsPerCell = currentWeekTransactions[columnKey] ?? []
             }
-
         return cell
     }
     

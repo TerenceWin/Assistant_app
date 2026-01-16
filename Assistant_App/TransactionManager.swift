@@ -36,8 +36,10 @@ class TransactionManager{
     }
     
     func addTransaction(_ transaction: MoneyStruct, completion: @escaping(Bool) -> Void){
+        let id = transaction.id ?? UUID().uuidString
+        
         do{
-            try db.collection(K.collectionName).addDocument(from: transaction) {(error) in
+            try db.collection(K.collectionName).document(id).setData(from: transaction) {error in
                 if let e = error{
                     print("There was an issue saving data to firebase. \(e)")
                     completion(false)
@@ -47,6 +49,26 @@ class TransactionManager{
                 }
             }
         }catch{
+            completion(false)
+        }
+    }
+    
+    func editTransaction(_ transaction: MoneyStruct, completion: @escaping(Bool) -> Void){
+        guard !transaction.id!.isEmpty else{
+            print("Id is empty. ")
+            completion(false)
+            return
+        }
+        
+        do{
+            try db.collection(K.collectionName).document(transaction.id!).setData(from: transaction)
+            
+            if let index = self.allTransactions.firstIndex(where: {$0.id == transaction.id}) {
+                self.allTransactions[index] = transaction
+            }
+            completion(true)
+        }catch let error{
+            print("Error editing the transaction: \(error)")
             completion(false)
         }
     }

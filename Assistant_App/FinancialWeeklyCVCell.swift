@@ -12,10 +12,15 @@ import Foundation
 //let dateString = isoFormatter.string(from: Date())
 // Output: "2025-12-27T18:15:20Z"
 
+protocol FinancialWeeklyCVCellDelegate: AnyObject{
+    func UpdateSelectedCell(_ transaction: MoneyStruct)
+}
+
 class FinancialWeeklyCVCell: UICollectionViewCell {
-    
+    weak var delegate : FinancialWeeklyCVCellDelegate?
     @IBOutlet weak var tableStack : UITableView!
     private var sortedTransactions: [MoneyStruct] = []
+    var selectedTransaction = MoneyStruct(amount: 0, date: Date(), type: "", category: "")
     
     var transactionsPerCell : [MoneyStruct] = [] {
         didSet{
@@ -27,7 +32,6 @@ class FinancialWeeklyCVCell: UICollectionViewCell {
     override func awakeFromNib() {
             
         super.awakeFromNib()
-        
         tableStack.dataSource = self
         tableStack.delegate = self
         
@@ -38,8 +42,6 @@ class FinancialWeeklyCVCell: UICollectionViewCell {
     func configure(with transactions: [MoneyStruct]){
         tableStack.reloadData()
     }
-    
-
 }
 
 //MARK: - TableView DataSource, Delegate
@@ -56,7 +58,8 @@ extension FinancialWeeklyCVCell: UITableViewDelegate, UITableViewDataSource{
     override func prepareForReuse() {
             super.prepareForReuse()
             self.sortedTransactions = []
-        }
+            delegate = nil
+    }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableStack.dequeueReusableCell(withIdentifier: "FinancialWeeklyTableCell", for: indexPath) as! FinancialWeeklyTableViewCell
@@ -75,13 +78,13 @@ extension FinancialWeeklyCVCell: UITableViewDelegate, UITableViewDataSource{
         
         cell.transactionLabel.layer.cornerRadius = 5.0
         cell.transactionLabel.clipsToBounds = true
-        
         return cell
-        
     }
     
-
-    
-    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let selectedTransaction = sortedTransactions[indexPath.row]
+        print("\(selectedTransaction)")
+        delegate?.UpdateSelectedCell(selectedTransaction)
+    }
 }
 

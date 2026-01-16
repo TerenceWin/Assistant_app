@@ -6,9 +6,10 @@
 //
 
 import Foundation
+import FirebaseFirestore
 
 struct MoneyStruct: Codable{
-    var id : String = UUID().uuidString
+    @DocumentID var id: String?
     var amount: Int
     var date: Date
     var type: String //"earn" or "spend"

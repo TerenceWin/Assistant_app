@@ -39,7 +39,6 @@ class FinancialWeeklyViewController: UIViewController{
     @IBOutlet weak var financialWeeklyCV : FinancialWeeklyCV!
     var groupedTransactions : [WeeklyKey: [MoneyStruct]] = [:]
     
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         financialWeeklyCV.financialDelegate = self
@@ -54,15 +53,6 @@ class FinancialWeeklyViewController: UIViewController{
                 self.financialWeeklyCV.reloadData()
                 
                 print("Successfully loaded \(TransactionManager.shared.allTransactions.count) items")
-//                TransactionManager.shared.printAllTransactions()
-            }
-        }
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?){
-        if segue.identifier == "goToEditView"{
-            if let editVC = segue.destination as? FinancialWeeklyEditView{
-                editVC.delegate = self
             }
         }
     }
@@ -93,8 +83,6 @@ class FinancialWeeklyViewController: UIViewController{
         }
     }
     
-    
-    
     //MARK: - GroupAllTransactions, GetWeekRange and UpdateLabels func
     func groupAllTransactions(transactions: [MoneyStruct]){
         groupedTransactions = [:]
@@ -114,9 +102,9 @@ class FinancialWeeklyViewController: UIViewController{
         }
         
         financialWeeklyCV.groupedAllTransactions = groupedTransactions
-        for (key, value) in groupedTransactions{
-            print("Key: \(key), Value: \(value.count)")
-        }
+//        for (key, value) in groupedTransactions{
+//            print("Key: \(key), Value: \(value.count)")
+//        }
     }
     
     func getWeekRange(for date: Date) ->(start: Date, end: Date)?{
@@ -168,7 +156,7 @@ extension FinancialWeeklyViewController: FinancialWeeklyCVDelegate{
     }
 }
 
-//MARK: - Adding new Transaction
+//MARK: - Adding new Transaction Extension
 extension FinancialWeeklyViewController: reloadFinanciallWeeklyVCDelegate{
     func addedTransaction() {
         TransactionManager.shared.loadData{ [weak self] in
@@ -182,7 +170,29 @@ extension FinancialWeeklyViewController: reloadFinanciallWeeklyVCDelegate{
     }
 }
 
+//MARK: - UpdateSelectedCell's Transaction -> Edit View
 
+extension FinancialWeeklyViewController: FinancialWeeklyCVCellDelegate{
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToEditView" {
+            if let destinationVC = segue.destination as? FinancialWeeklyEditView {
+                destinationVC.delegate = self
+                if let transaction = sender as? MoneyStruct{
+                    destinationVC.currentTransaction = transaction
+                    destinationVC.isNew = false
+                    print("with transaction")
+                }else{
+                    destinationVC.isNew = true
+                }
+            }
+        }
+    }
+    
+    func UpdateSelectedCell(_ transaction: MoneyStruct) {
+        performSegue(withIdentifier: "goToEditView", sender: transaction)
+    }
+}
     
 //MARK: - Date Extension
 extension Date{
