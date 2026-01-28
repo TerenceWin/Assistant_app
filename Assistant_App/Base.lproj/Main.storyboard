@@ -116,6 +116,22 @@
             </objects>
             <point key="canvasLocation" x="1015" y="-188"/>
         </scene>
+        <!--View Controller-->
+        <scene sceneID="ZdH-WZ-2u2">
+            <objects>
+                <viewController id="6DY-sQ-k6M" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="0MH-9i-666">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <viewLayoutGuide key="safeArea" id="rn9-73-4Yv"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="a2z-Wz-bZv"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="b59-tz-0QS" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="2169" y="-606"/>
+        </scene>
         <!--Work Out View Controller-->
         <scene sceneID="aNl-X0-KT5">
             <objects>
@@ -178,6 +194,9 @@
                                 <buttonConfiguration key="configuration" style="tinted" title="Monthly View">
                                     <fontDescription key="titleFontDescription" type="system" weight="semibold" pointSize="20"/>
                                 </buttonConfiguration>
+                                <connections>
+                                    <segue destination="0c1-1p-aNS" kind="show" identifier="goToMonthlyView" id="82d-Vm-HSL"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="STQ-4a-ndl">
                                 <rect key="frame" x="96.666666666666686" y="626" width="200" height="38"/>
@@ -206,26 +225,206 @@
                         <outlet property="monthlyButton" destination="etg-c3-8sl" id="b5s-Um-WOp"/>
                         <outlet property="weeklyButton" destination="7vQ-Wf-rzx" id="Ch4-Tv-HoP"/>
                         <outlet property="yearlyButton" destination="STQ-4a-ndl" id="9S0-XG-GFU"/>
+                        <segue destination="6DY-sQ-k6M" kind="show" identifier="goToYearlyView" id="sr6-6z-U4L"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Px7-Xs-KqO" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1014.5038167938931" y="-924.64788732394368"/>
+            <point key="canvasLocation" x="1015" y="-1326"/>
         </scene>
-        <!--View Controller-->
+        <!--Financial Monthly View Controller-->
         <scene sceneID="8Ck-GZ-1GI">
             <objects>
-                <viewController id="0c1-1p-aNS" sceneMemberID="viewController">
+                <viewController id="0c1-1p-aNS" customClass="FinancialMonthlyViewController" customModule="Assistant_App" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="BFG-91-BCg">
                         <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="9UC-1W-YzI">
+                                <rect key="frame" x="30.000000000000004" y="162" width="39.333333333333343" height="35"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="35" id="kZ8-3z-tHJ"/>
+                                </constraints>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="&lt;">
+                                    <fontDescription key="titleFontDescription" type="system" weight="semibold" pointSize="24"/>
+                                    <color key="baseBackgroundColor" red="0.109803915" green="0.14901961389999999" blue="0.21960783" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                </buttonConfiguration>
+                                <connections>
+                                    <action selector="previousButtonPressed:" destination="0c1-1p-aNS" eventType="touchUpInside" id="sc1-jQ-tE2"/>
+                                    <action selector="previousWeekPressed:" destination="tvf-Hh-C2k" eventType="touchUpInside" id="aNf-q7-thQ"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Month" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8Wf-FL-8eA">
+                                <rect key="frame" x="168.33333333333334" y="142" width="56.666666666666657" height="24"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OCV-mP-hFU">
+                                <rect key="frame" x="323.66666666666669" y="162" width="39.333333333333314" height="35"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="35" id="582-YG-WZ4"/>
+                                </constraints>
+                                <state key="normal" title="Button"/>
+                                <buttonConfiguration key="configuration" style="filled" title="&gt;">
+                                    <fontDescription key="titleFontDescription" type="system" weight="semibold" pointSize="24"/>
+                                    <color key="baseBackgroundColor" red="0.109803915" green="0.14901961389999999" blue="0.21960783" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                </buttonConfiguration>
+                                <connections>
+                                    <action selector="nextButtonPressed:" destination="0c1-1p-aNS" eventType="touchUpInside" id="dgi-PO-uBd"/>
+                                    <action selector="nextWeekPressed:" destination="tvf-Hh-C2k" eventType="touchUpInside" id="BcL-8R-VHL"/>
+                                </connections>
+                            </button>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" spacing="15" translatesAutoresizingMaskIntoConstraints="NO" id="fVa-ar-qPz">
+                                <rect key="frame" x="0.0" y="207.66666666666666" width="393" height="30"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sun" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="5WV-ey-GoY">
+                                        <rect key="frame" x="0.0" y="0.0" width="43.333333333333336" height="30"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Mon" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jhs-ek-Q8A">
+                                        <rect key="frame" x="58.333333333333329" y="0.0" width="43.333333333333329" height="30"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Tue" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="G9Y-SC-Jmj">
+                                        <rect key="frame" x="116.66666666666667" y="0.0" width="43.333333333333329" height="30"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Wed" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ycd-QY-dH3">
+                                        <rect key="frame" x="175" y="0.0" width="43" height="30"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Thu" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1P8-sL-GeK">
+                                        <rect key="frame" x="233" y="0.0" width="43.333333333333314" height="30"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Fri" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2EY-wy-YyQ">
+                                        <rect key="frame" x="291.33333333333331" y="0.0" width="43.333333333333314" height="30"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sat" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="v6f-I4-cV7">
+                                        <rect key="frame" x="349.66666666666669" y="0.0" width="43.333333333333314" height="30"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="30" id="zY6-Bz-vgV"/>
+                                </constraints>
+                            </stackView>
+                            <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="7df-tS-64Q" customClass="FinancialMonthlyCalendarView" customModule="Assistant_App" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="237.66666666666663" width="393" height="250"/>
+                                <color key="backgroundColor" systemColor="systemGray4Color"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="250" id="zg1-A4-hGp"/>
+                                </constraints>
+                                <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="j2z-FZ-qi4">
+                                    <size key="itemSize" width="164" height="162"/>
+                                    <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                                    <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                                    <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                                </collectionViewFlowLayout>
+                                <cells>
+                                    <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" reuseIdentifier="FinancialMonthlyCVCell" id="SDx-bn-Bwk" customClass="FinancialMonthlyCalendarViewCell" customModule="Assistant_App" customModuleProvider="target">
+                                        <rect key="frame" x="0.0" y="0.0" width="164" height="162"/>
+                                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                        <collectionViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" id="D5r-lR-cZj">
+                                            <rect key="frame" x="0.0" y="0.0" width="164" height="162"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="o1Q-pZ-uA7">
+                                                    <rect key="frame" x="66" y="72" width="32.333333333333343" height="18"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                                    <color key="textColor" red="0.109803915" green="0.14901961389999999" blue="0.21960783" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="o1Q-pZ-uA7" firstAttribute="centerX" secondItem="D5r-lR-cZj" secondAttribute="centerX" id="4Bh-r6-RNQ"/>
+                                                <constraint firstItem="o1Q-pZ-uA7" firstAttribute="centerY" secondItem="D5r-lR-cZj" secondAttribute="centerY" id="w2l-pj-vrB"/>
+                                            </constraints>
+                                        </collectionViewCellContentView>
+                                        <size key="customSize" width="164" height="162"/>
+                                        <connections>
+                                            <outlet property="dateLabel" destination="o1Q-pZ-uA7" id="4kC-i0-Vjt"/>
+                                        </connections>
+                                    </collectionViewCell>
+                                </cells>
+                            </collectionView>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="a3q-Xt-xtM">
+                                <rect key="frame" x="0.0" y="487.66666666666674" width="393" height="190"/>
+                                <color key="backgroundColor" red="0.86398798227310181" green="0.94715601205825806" blue="0.8016924262046814" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="190" id="Mud-41-bwI"/>
+                                </constraints>
+                            </tableView>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="xfn-yr-id0">
+                                <rect key="frame" x="0.0" y="677.66666666666663" width="393" height="106.33333333333337"/>
+                                <color key="backgroundColor" systemColor="systemPinkColor"/>
+                            </tableView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Total amount" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="VMf-r0-hSy">
+                                <rect key="frame" x="144.33333333333334" y="176" width="104.33333333333334" height="21.666666666666657"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="uht-iF-MyP"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="xfn-yr-id0" firstAttribute="leading" secondItem="uht-iF-MyP" secondAttribute="leading" id="3wc-OY-WXK"/>
+                            <constraint firstItem="8Wf-FL-8eA" firstAttribute="centerX" secondItem="BFG-91-BCg" secondAttribute="centerX" id="7E0-Zh-TcY"/>
+                            <constraint firstItem="OCV-mP-hFU" firstAttribute="top" secondItem="uht-iF-MyP" secondAttribute="top" id="BX3-eo-lSf"/>
+                            <constraint firstItem="uht-iF-MyP" firstAttribute="trailing" secondItem="fVa-ar-qPz" secondAttribute="trailing" id="H3D-ap-P0f"/>
+                            <constraint firstItem="9UC-1W-YzI" firstAttribute="top" secondItem="uht-iF-MyP" secondAttribute="top" id="Ha7-0e-T7M"/>
+                            <constraint firstItem="VMf-r0-hSy" firstAttribute="top" secondItem="8Wf-FL-8eA" secondAttribute="bottom" constant="10" id="KNt-O0-WWS"/>
+                            <constraint firstItem="xfn-yr-id0" firstAttribute="bottom" secondItem="uht-iF-MyP" secondAttribute="bottom" id="NGb-ex-OUp"/>
+                            <constraint firstItem="7df-tS-64Q" firstAttribute="top" secondItem="fVa-ar-qPz" secondAttribute="bottom" id="NcM-MO-Zcr"/>
+                            <constraint firstItem="fVa-ar-qPz" firstAttribute="top" secondItem="VMf-r0-hSy" secondAttribute="bottom" constant="10" id="RQb-j6-YgB"/>
+                            <constraint firstItem="uht-iF-MyP" firstAttribute="trailing" secondItem="OCV-mP-hFU" secondAttribute="trailing" constant="30" id="YKX-HY-8rj"/>
+                            <constraint firstItem="9UC-1W-YzI" firstAttribute="leading" secondItem="uht-iF-MyP" secondAttribute="leading" constant="30" id="ZDt-jL-tIe"/>
+                            <constraint firstItem="8Wf-FL-8eA" firstAttribute="top" secondItem="uht-iF-MyP" secondAttribute="top" constant="-20" id="cGk-i3-jAW"/>
+                            <constraint firstItem="uht-iF-MyP" firstAttribute="trailing" secondItem="a3q-Xt-xtM" secondAttribute="trailing" id="dxT-83-74L"/>
+                            <constraint firstItem="7df-tS-64Q" firstAttribute="leading" secondItem="uht-iF-MyP" secondAttribute="leading" id="m3v-2i-DM4"/>
+                            <constraint firstItem="uht-iF-MyP" firstAttribute="trailing" secondItem="xfn-yr-id0" secondAttribute="trailing" id="oV5-jd-BEj"/>
+                            <constraint firstItem="fVa-ar-qPz" firstAttribute="leading" secondItem="uht-iF-MyP" secondAttribute="leading" id="sXN-kx-NBN"/>
+                            <constraint firstItem="VMf-r0-hSy" firstAttribute="centerX" secondItem="BFG-91-BCg" secondAttribute="centerX" id="she-cj-hsB"/>
+                            <constraint firstItem="a3q-Xt-xtM" firstAttribute="leading" secondItem="uht-iF-MyP" secondAttribute="leading" id="tbn-20-lMx"/>
+                            <constraint firstItem="a3q-Xt-xtM" firstAttribute="top" secondItem="7df-tS-64Q" secondAttribute="bottom" id="tcg-iS-CZJ"/>
+                            <constraint firstItem="xfn-yr-id0" firstAttribute="top" secondItem="a3q-Xt-xtM" secondAttribute="bottom" id="uec-Gc-tcn"/>
+                            <constraint firstItem="uht-iF-MyP" firstAttribute="trailing" secondItem="7df-tS-64Q" secondAttribute="trailing" id="x3m-mj-iLy"/>
+                        </constraints>
                     </view>
+                    <navigationItem key="navigationItem" id="Zcz-qh-gaj"/>
+                    <connections>
+                        <outlet property="DaysLabel" destination="fVa-ar-qPz" id="apv-RI-YhB"/>
+                        <outlet property="earnTV" destination="a3q-Xt-xtM" id="blw-2D-3T0"/>
+                        <outlet property="monthLabel" destination="8Wf-FL-8eA" id="JJa-yu-FS3"/>
+                        <outlet property="monthlyCalendar" destination="7df-tS-64Q" id="ygU-Aw-oiq"/>
+                        <outlet property="nextButton" destination="OCV-mP-hFU" id="zlb-kw-dvX"/>
+                        <outlet property="previousButton" destination="9UC-1W-YzI" id="2Bl-re-Roo"/>
+                        <outlet property="spendTV" destination="xfn-yr-id0" id="Pe3-jb-s7D"/>
+                        <outlet property="totalAmount" destination="VMf-r0-hSy" id="aNV-3D-i5S"/>
+                        <segue destination="AL8-VS-EqV" kind="show" identifier="MonthlyToEditView" id="sPg-wc-NQ1"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="ob1-SU-b4p" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1984" y="-1038"/>
+            <point key="canvasLocation" x="2169" y="-1326"/>
         </scene>
         <!--Financial Weekly View Controller-->
         <scene sceneID="mzG-B0-yzU">
@@ -318,6 +517,7 @@
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="&gt;">
                                     <fontDescription key="titleFontDescription" type="system" weight="semibold" pointSize="24"/>
+                                    <color key="baseBackgroundColor" red="0.109803915" green="0.14901961389999999" blue="0.21960783" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 </buttonConfiguration>
                                 <connections>
                                     <action selector="nextWeekPressed:" destination="tvf-Hh-C2k" eventType="touchUpInside" id="j8q-QH-2Dg"/>
@@ -331,6 +531,7 @@
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="&lt;">
                                     <fontDescription key="titleFontDescription" type="system" weight="semibold" pointSize="24"/>
+                                    <color key="baseBackgroundColor" red="0.109803915" green="0.14901961389999999" blue="0.21960783" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 </buttonConfiguration>
                                 <connections>
                                     <action selector="previousWeekPressed:" destination="tvf-Hh-C2k" eventType="touchUpInside" id="6G4-ce-NeP"/>
@@ -345,6 +546,7 @@
                                 <state key="normal" title="Button"/>
                                 <buttonConfiguration key="configuration" style="filled" title="+">
                                     <fontDescription key="titleFontDescription" type="system" pointSize="28"/>
+                                    <color key="baseBackgroundColor" red="0.109803915" green="0.14901961389999999" blue="0.21960783" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                                 </buttonConfiguration>
                                 <userDefinedRuntimeAttributes>
                                     <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius">
@@ -389,7 +591,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="06C-Og-9xB" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1911" y="-1782"/>
+            <point key="canvasLocation" x="2170" y="-2078"/>
         </scene>
         <!--Financial Weekly Edit View-->
         <scene sceneID="jpR-nE-WdG">
@@ -494,12 +696,12 @@
                                                         </label>
                                                     </subviews>
                                                     <constraints>
-                                                        <constraint firstItem="rJB-QA-qb7" firstAttribute="top" secondItem="lp6-vz-MaU" secondAttribute="top" id="1sJ-Zu-aB6"/>
+                                                        <constraint firstItem="rJB-QA-qb7" firstAttribute="top" secondItem="lp6-vz-MaU" secondAttribute="top" id="AAY-gY-l6e"/>
                                                         <constraint firstAttribute="trailing" secondItem="rJB-QA-qb7" secondAttribute="trailing" id="ACe-ei-CCw"/>
                                                         <constraint firstItem="rJB-QA-qb7" firstAttribute="leading" secondItem="lp6-vz-MaU" secondAttribute="leading" id="OiB-97-C1d"/>
                                                         <constraint firstAttribute="bottom" secondItem="rJB-QA-qb7" secondAttribute="bottom" constant="20" id="WK6-XS-1rL"/>
+                                                        <constraint firstItem="hjN-iY-uL4" firstAttribute="top" secondItem="rJB-QA-qb7" secondAttribute="bottom" id="WTW-HX-Bbl"/>
                                                         <constraint firstAttribute="bottom" secondItem="hjN-iY-uL4" secondAttribute="bottom" id="Z28-zk-lHN"/>
-                                                        <constraint firstItem="hjN-iY-uL4" firstAttribute="top" secondItem="rJB-QA-qb7" secondAttribute="bottom" id="c8E-St-bhz"/>
                                                         <constraint firstItem="hjN-iY-uL4" firstAttribute="leading" secondItem="lp6-vz-MaU" secondAttribute="leading" id="hVL-13-f56"/>
                                                         <constraint firstAttribute="trailing" secondItem="hjN-iY-uL4" secondAttribute="trailing" id="hec-OP-WO4"/>
                                                     </constraints>
@@ -597,15 +799,24 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="TGP-VB-pIp" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2946" y="-1782"/>
+            <point key="canvasLocation" x="3437" y="-1594"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="sPg-wc-NQ1"/>
+    </inferredMetricsTieBreakers>
     <resources>
         <systemColor name="labelColor">
             <color white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemGray4Color">
+            <color red="0.81960784310000001" green="0.81960784310000001" blue="0.83921568629999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemPinkColor">
+            <color red="1" green="0.1764705882" blue="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemRedColor">
             <color red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>

@@ -12,12 +12,12 @@ import Foundation
 //let dateString = isoFormatter.string(from: Date())
 // Output: "2025-12-27T18:15:20Z"
 
-protocol FinancialWeeklyCVCellDelegate: AnyObject{
+protocol FinancialSeugeToEditViewDelegate: AnyObject{
     func UpdateSelectedCell(_ transaction: MoneyStruct)
 }
 
 class FinancialWeeklyCVCell: UICollectionViewCell {
-    weak var delegate : FinancialWeeklyCVCellDelegate?
+    weak var delegate : FinancialSeugeToEditViewDelegate?
     @IBOutlet weak var tableStack : UITableView!
     private var sortedTransactions: [MoneyStruct] = []
     var selectedTransaction = MoneyStruct(amount: 0, date: Date(), type: "", category: "")

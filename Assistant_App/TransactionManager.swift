@@ -22,6 +22,7 @@ class TransactionManager{
             completion?()
         }
     }
+   
     
     func fetchTransaction(completion: @escaping ([MoneyStruct]) -> Void){
         db.collection(K.collectionName).getDocuments{ (snapshot, error) in

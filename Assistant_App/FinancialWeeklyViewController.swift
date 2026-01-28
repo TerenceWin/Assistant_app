@@ -157,7 +157,7 @@ extension FinancialWeeklyViewController: FinancialWeeklyCVDelegate{
 }
 
 //MARK: - Adding new Transaction Extension
-extension FinancialWeeklyViewController: reloadFinanciallWeeklyVCDelegate{
+extension FinancialWeeklyViewController: reloadFinancialVCDelegate{
     func addedTransaction() {
         TransactionManager.shared.loadData{ [weak self] in
             guard let self = self else{return}
@@ -172,7 +172,7 @@ extension FinancialWeeklyViewController: reloadFinanciallWeeklyVCDelegate{
 
 //MARK: - UpdateSelectedCell's Transaction -> Edit View
 
-extension FinancialWeeklyViewController: FinancialWeeklyCVCellDelegate{
+extension FinancialWeeklyViewController: FinancialSeugeToEditViewDelegate{
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "goToEditView" {
@@ -196,6 +196,11 @@ extension FinancialWeeklyViewController: FinancialWeeklyCVCellDelegate{
     
 //MARK: - Date Extension
 extension Date{
+    func getFirstDateOfMonth(for date: Date = Date()) -> Date{
+        let components = Calendar.current.dateComponents([.year, .month], from: date)
+        return Calendar.current.date(from: components)!
+    }
+    
     var endOfMonth: Int{
         Calendar.current.range(of: .day, in: .month, for: self)?.count ?? 0
     }
@@ -225,6 +230,12 @@ extension Date{
             dayNumber -= 1
         }
         return dayNumber
+    }
+    
+    func getDateInYYYYMMDD() -> String{
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter.string(from: self)
     }
     
     func getDateAsInt() -> Int{

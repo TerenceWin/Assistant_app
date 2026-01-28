@@ -14,10 +14,14 @@ class FinancialViewController: UIViewController {
     @IBOutlet weak var monthlyButton: UIButton!
     @IBOutlet weak var yearlyButton: UIButton!
     
-
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
+        
+        
+        
     }
 
 

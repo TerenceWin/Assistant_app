@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-protocol reloadFinanciallWeeklyVCDelegate{
+protocol reloadFinancialVCDelegate{
     func addedTransaction()
 }
 
@@ -17,7 +17,7 @@ class FinancialWeeklyEditView: UIViewController{
     private var spendCategoryArr : [String] = ["grocery", "drinks", "eat out", "transport", "goods", "fee", "subscriptions", "fun", "toiletry", "unknown"]
     private var currentCategoryArr : [String]?
     var isNew : Bool = false
-    var delegate : reloadFinanciallWeeklyVCDelegate?
+    var delegate : reloadFinancialVCDelegate?
     
     @IBOutlet weak var earnButton: UIButton!
     @IBOutlet weak var spendButton: UIButton!
@@ -41,7 +41,6 @@ class FinancialWeeklyEditView: UIViewController{
             earnIsTrue = currentTransaction?.type == "earn"
             currentSelectedCategory = currentTransaction?.category ?? ""
             currentNoteDescription = currentTransaction?.note ?? ""
-            print(self.currentTransaction)
         }
     }
     
@@ -176,11 +175,19 @@ extension FinancialWeeklyEditView: UICollectionViewDataSource, UICollectionViewD
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = categoryCV.dequeueReusableCell(withReuseIdentifier: "categoryCollectionViewCell", for: indexPath) as! FinancialWeeklyEditViewCVCell
 
+        if let icon = currentCategoryArr?[indexPath.item]{
+            cell.categoryCellImage.image = UIImage(named: icon)
+            cell.categoryCellImage.backgroundColor = .white
+        }else{
+            cell.categoryCellImage.image = UIImage(systemName: "questionmark.square.dashed")
+            cell.categoryCellImage.backgroundColor = .white
+        }
         cell.categoryCellImage.layer.borderWidth = 0.5
         cell.categoryCellLabel.text = currentCategoryArr?[indexPath.item]
+        cell.categoryCellLabel.backgroundColor = .clear
         
         if currentSelectedCategory == currentCategoryArr?[indexPath.item]{
-            cell.categoryCellImage.backgroundColor = UIColor.lightGray
+            cell.categoryCellLabel.backgroundColor = UIColor.systemGray4
         }else{
             cell.categoryCellImage.backgroundColor = .none
         }

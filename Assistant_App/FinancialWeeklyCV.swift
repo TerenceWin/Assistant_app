@@ -124,7 +124,7 @@ class FinancialWeeklyCV: UICollectionView, UICollectionViewDelegate, UICollectio
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FinancialWeeklyCell", for: indexPath) as? FinancialWeeklyCVCell else {
             return UICollectionViewCell()
         }
-        cell.delegate = self.financialDelegate as? FinancialWeeklyCVCellDelegate
+        cell.delegate = self.financialDelegate as? FinancialSeugeToEditViewDelegate
         
         let column = indexPath.item % 7
         let row = indexPath.item / 7

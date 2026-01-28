@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		196C9F1C2F10E23400498784 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 196C9F1B2F10E23400498784 /* FirebaseAuth */; };
 		196C9F1E2F10E23400498784 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 196C9F1D2F10E23400498784 /* FirebaseFirestore */; };
+		19F001C42F1AACF400AC048C /* JTAppleCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = 19F001C32F1AACF400AC048C /* JTAppleCalendar */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -71,6 +72,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				196C9F1C2F10E23400498784 /* FirebaseAuth in Frameworks */,
+				19F001C42F1AACF400AC048C /* JTAppleCalendar in Frameworks */,
 				196C9F1E2F10E23400498784 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -134,6 +136,7 @@
 			packageProductDependencies = (
 				196C9F1B2F10E23400498784 /* FirebaseAuth */,
 				196C9F1D2F10E23400498784 /* FirebaseFirestore */,
+				19F001C32F1AACF400AC048C /* JTAppleCalendar */,
 			);
 			productName = Assistant_App;
 			productReference = 1931A9CF2EF7729B00DB5045 /* Assistant_App.app */;
@@ -219,6 +222,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				196C9F1A2F10E23400498784 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				19F001C22F1AACF400AC048C /* XCRemoteSwiftPackageReference "JTAppleCalendar" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1931A9D02EF7729B00DB5045 /* Products */;
@@ -587,6 +591,14 @@
 				minimumVersion = 12.7.0;
 			};
 		};
+		19F001C22F1AACF400AC048C /* XCRemoteSwiftPackageReference "JTAppleCalendar" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/patchthecode/JTAppleCalendar";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 8.0.5;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -599,6 +611,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 196C9F1A2F10E23400498784 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFirestore;
+		};
+		19F001C32F1AACF400AC048C /* JTAppleCalendar */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 19F001C22F1AACF400AC048C /* XCRemoteSwiftPackageReference "JTAppleCalendar" */;
+			productName = JTAppleCalendar;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
