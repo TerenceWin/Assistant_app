@@ -14,7 +14,9 @@ class FinancialViewController: UIViewController {
     @IBOutlet weak var monthlyButton: UIButton!
     @IBOutlet weak var yearlyButton: UIButton!
     
-    
+    @IBAction func yearlyButtonPressed(_ sender : UIButton){
+        performSegue(withIdentifier: "FinancialToYearlyView", sender: self)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

@@ -201,8 +201,6 @@ extension FinancialMonthlyViewController: JTACMonthViewDataSource, JTACMonthView
            let tempEndDate = tempCalendar.date(byAdding: .year, value: 10, to: tempDate) else {
             return ConfigurationParameters(startDate: Date(), endDate: Date())
         }
-
-        formatter.dateFormat = "yyyy MM dd"
         
         let startDate = tempCalendar.startOfDay(for: tempStartDate)
         let endDate = tempCalendar.startOfDay(for: tempEndDate)

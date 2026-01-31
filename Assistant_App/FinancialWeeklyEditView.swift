@@ -117,12 +117,12 @@ class FinancialWeeklyEditView: UIViewController{
             note: noteToSave
         )
         
-        if isNew{   //NEW TRANSACTION -> Add
+        if isNew{
             print("This is New Transaction")
             TransactionManager.shared.addTransaction(transaction) {[weak self] success in
                 self?.handleCompletion(success)
             }}
-        else{       //OLD TRANSACTION -> Edit
+        else{       
             print("This is Old Transaction")
             TransactionManager.shared.editTransaction(transaction) { [weak self] success in
                 self?.handleCompletion(success)
