@@ -123,7 +123,7 @@
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Blc-8R-H5L">
                                         <rect key="frame" x="20" y="61" width="322" height="350"/>
                                         <subviews>
-                                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="Task..." textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="ZWh-P7-mcF">
+                                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="ZWh-P7-mcF">
                                                 <rect key="frame" x="0.0" y="0.0" width="322" height="300"/>
                                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                 <constraints>
@@ -223,7 +223,7 @@
                                         <viewLayoutGuide key="frameLayoutGuide" id="kxU-wH-l4a"/>
                                     </scrollView>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bD0-mz-RIf">
-                                        <rect key="frame" x="20" y="532" width="76.666666666666671" height="30"/>
+                                        <rect key="frame" x="20" y="537" width="76.666666666666671" height="30"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="30" id="wW5-HC-xCM"/>
                                         </constraints>
@@ -231,7 +231,7 @@
                                         <buttonConfiguration key="configuration" style="plain" title="Zoom?"/>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sWA-2W-4gt">
-                                        <rect key="frame" x="182.33333333333337" y="532" width="159.66666666666663" height="30"/>
+                                        <rect key="frame" x="112.33333333333336" y="537" width="159.66666666666663" height="30"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="30" id="ZJp-0o-H09"/>
                                         </constraints>
@@ -239,7 +239,7 @@
                                         <buttonConfiguration key="configuration" style="plain" title="Current Location?"/>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="0M9-O1-WUX">
-                                        <rect key="frame" x="20" y="572" width="155.33333333333334" height="30"/>
+                                        <rect key="frame" x="20" y="577" width="155.33333333333334" height="30"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="30" id="enb-il-dhe"/>
                                         </constraints>
@@ -247,9 +247,9 @@
                                         <buttonConfiguration key="configuration" style="plain" title="Other Location?"/>
                                     </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="bOp-VK-5yB">
-                                        <rect key="frame" x="131" y="617.66666666666663" width="100" height="34.333333333333371"/>
+                                        <rect key="frame" x="131" y="622.66666666666663" width="100" height="34.333333333333371"/>
                                         <constraints>
-                                            <constraint firstAttribute="width" constant="100" id="hTw-bY-rGt"/>
+                                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="100" id="hTw-bY-rGt"/>
                                         </constraints>
                                         <state key="normal" title="Button"/>
                                         <buttonConfiguration key="configuration" style="plain" title="Add"/>
@@ -266,8 +266,8 @@
                                 <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <constraints>
                                     <constraint firstItem="Bdb-BL-OKt" firstAttribute="top" secondItem="Blc-8R-H5L" secondAttribute="bottom" constant="20" id="1DS-7a-6It"/>
-                                    <constraint firstItem="sWA-2W-4gt" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="bD0-mz-RIf" secondAttribute="trailing" constant="62" id="94t-Ob-yyW"/>
-                                    <constraint firstItem="bD0-mz-RIf" firstAttribute="top" secondItem="Pf6-eL-WT5" secondAttribute="bottom" constant="10" id="CVk-B6-J9s"/>
+                                    <constraint firstItem="sWA-2W-4gt" firstAttribute="leading" relation="lessThanOrEqual" secondItem="bD0-mz-RIf" secondAttribute="trailing" constant="62" id="94t-Ob-yyW"/>
+                                    <constraint firstItem="bD0-mz-RIf" firstAttribute="top" secondItem="Pf6-eL-WT5" secondAttribute="bottom" constant="15" id="CVk-B6-J9s"/>
                                     <constraint firstItem="Pf6-eL-WT5" firstAttribute="top" secondItem="7pF-v5-npy" secondAttribute="bottom" constant="10" id="CZ7-gp-onK"/>
                                     <constraint firstItem="MTv-RD-UO8" firstAttribute="leading" secondItem="EoL-pL-9UJ" secondAttribute="leading" constant="28" id="K5B-Gn-IsO"/>
                                     <constraint firstAttribute="trailing" secondItem="Blc-8R-H5L" secondAttribute="trailing" constant="20" id="MJy-r1-z4B"/>
@@ -280,7 +280,7 @@
                                     <constraint firstItem="Bdb-BL-OKt" firstAttribute="leading" secondItem="EoL-pL-9UJ" secondAttribute="leading" constant="20" id="abd-9C-wi8"/>
                                     <constraint firstItem="Pf6-eL-WT5" firstAttribute="centerX" secondItem="EoL-pL-9UJ" secondAttribute="centerX" id="bgw-hw-owJ"/>
                                     <constraint firstItem="Blc-8R-H5L" firstAttribute="leading" secondItem="EoL-pL-9UJ" secondAttribute="leading" constant="20" id="dL7-EJ-BcY"/>
-                                    <constraint firstAttribute="trailing" secondItem="sWA-2W-4gt" secondAttribute="trailing" constant="20" id="eGX-mg-lbU"/>
+                                    <constraint firstAttribute="trailing" secondItem="sWA-2W-4gt" secondAttribute="trailing" constant="90" id="eGX-mg-lbU"/>
                                     <constraint firstAttribute="trailing" secondItem="7pF-v5-npy" secondAttribute="trailing" constant="20" id="grh-IE-4qp"/>
                                     <constraint firstItem="sWA-2W-4gt" firstAttribute="top" secondItem="bD0-mz-RIf" secondAttribute="top" id="hZg-ks-fVR"/>
                                     <constraint firstItem="7pF-v5-npy" firstAttribute="top" secondItem="Bdb-BL-OKt" secondAttribute="bottom" constant="20" id="ln8-EL-tow"/>
@@ -338,6 +338,7 @@
                         <outlet property="categoryScrollView" destination="7pF-v5-npy" id="JJN-Ph-3By"/>
                         <outlet property="categoryStackView" destination="voi-gw-bHb" id="Xek-Oi-t2W"/>
                         <outlet property="currentLocationButton" destination="sWA-2W-4gt" id="IWR-i8-kNN"/>
+                        <outlet property="datePicker" destination="Bdb-BL-OKt" id="nX3-nA-4iR"/>
                         <outlet property="iconContainer" destination="Eel-Ox-hJR" id="l3b-B4-7KK"/>
                         <outlet property="imageIcon" destination="ZkD-FI-NIL" id="WRk-Fl-1N2"/>
                         <outlet property="numberListIcon" destination="jDD-d6-Put" id="ch2-Jc-VNI"/>

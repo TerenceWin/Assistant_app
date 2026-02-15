@@ -8,7 +8,11 @@
 import Foundation
 import UIKit
 
-class ToDoViewController: UIViewController{
+class ChecklistAttachment: NSTextAttachment {
+    var isChecked: Bool = false
+}
+
+class ToDoViewController: UIViewController, UIGestureRecognizerDelegate{
     @IBOutlet weak var background : UIView!
     @IBOutlet weak var weeklyButton : UIButton!
     @IBOutlet weak var yearlyButton : UIButton!
@@ -21,6 +25,7 @@ class ToDoViewController: UIViewController{
     @IBOutlet weak var toDoListIcon : UIImageView!
     @IBOutlet weak var imageIcon : UIImageView!
     @IBOutlet weak var strikeThroughIcon : UIImageView!
+    @IBOutlet weak var datePicker : UIDatePicker!
     @IBOutlet weak var categoryScrollView : UIScrollView!
     @IBOutlet weak var categoryStackView : UIStackView!
     @IBOutlet weak var zoomButton : UIButton!
@@ -28,18 +33,22 @@ class ToDoViewController: UIViewController{
     @IBOutlet weak var otherLocationButton: UIButton!
     @IBOutlet weak var addButton : UIButton!
     
+    
     private let categories = ["Personal", "Work", "School", "Home", "Relationship", "Family", "Finance", "Health"]
     private let categoriesColor : [UIColor] = [
         UIColor(red: 226/255.0, green: 114/255.0, blue: 91/255.0, alpha: 1.0),
-        UIColor(red: 160/255.0, green: 82/255.0, blue: 45/255.0, alpha: 1.0),
-        UIColor(red: 183/255.0, green: 65/255.0, blue: 14/255.0, alpha: 1.0),
-        UIColor(red: 139.0/255.0, green: 0.0/255.0, blue: 0.0/255.0, alpha: 1.0),
-        UIColor(red: 34.0/255.0, green: 139.0/255.0, blue: 34.0/255.0, alpha: 1.0),
+        UIColor(red: 221/255, green: 187/255, blue: 127/255, alpha: 1.0),
+        UIColor(red: 150/255, green: 172/255, blue: 141/255, alpha: 1.0),
+        UIColor(red: 250/255, green: 194/255, blue: 164/255, alpha: 1.0),
+        UIColor(red: 60/255.0, green: 160/255.0, blue: 60/255.0, alpha: 1.0),
         UIColor(red: 107/255.0, green: 142/255.0, blue: 35/255.0, alpha: 1.0),
-        UIColor(red: 15/255.0, green: 76/255.0, blue: 129/255.0, alpha: 1.0),
-        UIColor(red: 29.0/255.0, green: 53.0/255.0, blue: 87.0/255.0, alpha: 1.0)
+        UIColor(red: 179/255, green: 170/255, blue: 161/255, alpha: 1.0),
+        UIColor(red: 149/255, green: 177/255, blue: 198/255, alpha: 1.0)
     ]
     private let locations = ["Zoom", "Current Location", "Others"]
+    private var locationButtons: [UIButton] {
+        return [zoomButton, currentLocationButton, otherLocationButton]
+    }
     
     var taskTitle : String? = ""
     var taskTextField : String? = ""
@@ -53,15 +62,15 @@ class ToDoViewController: UIViewController{
     override func viewDidLoad(){
         super.viewDidLoad()
         setBackgroundColor()
-        setUIForButtons()
         setUIForTextFields()
         setupUIViews()
-        
+        setUIForButtons()
+        setUpDatePicker()
         textfield.delegate = self
         titleLabel.delegate = self
+        _ = textfield.layoutManager
     }
-  
-    
+
     @IBAction func weeklyViewPressed(_ sender: UIButton){
         performSegue(withIdentifier: "goToToDoWeeklyView", sender: self)
     }
@@ -70,6 +79,8 @@ class ToDoViewController: UIViewController{
         performSegue(withIdentifier: "goToToDoMonthlyView", sender: self)
     }
     
+    
+    //MARK: - setUp UI
     func setBackgroundColor(){
         background.backgroundColor = UIColor(red: 249.0 / 255.0, green: 244.0 / 255.0, blue: 218.0 / 255.0, alpha: 1.0)
         background.layer.cornerRadius = 40.0
@@ -113,18 +124,169 @@ class ToDoViewController: UIViewController{
         setUpCategories()
     }
     
-    @objc func numberIconTapped(){
-        print("number list tapped")
+    //StringToAdd, Cursor location, lineRange = NSRange
+    
+    func addStringToTextView(text: String, range: NSRange, cursorLocation: Int){
+        let attribute : [NSAttributedString.Key: Any] = [
+            .font : UIFont.systemFont(ofSize: 20.0, weight: .regular)
+        ]
+        let addNumberList = NSAttributedString(string: "\(text)", attributes: attribute)
+        textfield.textStorage.replaceCharacters(in: range, with: addNumberList)
+        textfield.selectedRange = NSRange(location: cursorLocation, length: 0)
     }
+    
+    @objc func numberIconTapped(){
+        let range = textfield.selectedRange
+        let fullText = textfield.text as NSString
+        let lineRange = fullText.lineRange(for: NSRange(location: range.location, length: 0))
+        let lineText = fullText.substring(with: lineRange)
+            
+        if lineText.count > 0{
+            let firstChar = lineText[lineText.startIndex]
+
+            if let firstNum = Int(String(firstChar)){
+                guard let secondIndex = lineText.index(lineText.startIndex, offsetBy: 1, limitedBy: lineText.index(before: lineText.endIndex)) else{
+                    let newCursorLocation = lineRange.location + lineText.count + 4
+                    addStringToTextView(text: "\(lineText)\n1) ", range: lineRange, cursorLocation:newCursorLocation)
+                    return
+                }
+                
+                if lineText[secondIndex] == ")"{
+                    let newNum = firstNum + 1
+                    let newNumLength = String(newNum).count
+                    let newCursorLocation = lineRange.location + lineText.count + newNumLength + 3
+                    addStringToTextView(text: "\(lineText)\n\(newNum)) ", range: lineRange, cursorLocation:newCursorLocation)
+                }else{
+                    let newCursorLocation = lineRange.location + lineText.count + 4
+                    addStringToTextView(text: "\(lineText)\n1) ", range: lineRange, cursorLocation:newCursorLocation)
+                }
+            }else{
+                let newCursorLocation = lineRange.location + lineText.count + 4
+                addStringToTextView(text: "\(lineText)\n1) ", range: lineRange, cursorLocation:newCursorLocation)
+            }
+        }else{
+            let newCursorLocation = lineRange.location + 3
+            addStringToTextView(text: "1) ", range: lineRange, cursorLocation:newCursorLocation)
+        }
+    }
+
     
     @objc func bulletIconTapped(){
-        print("Bullet list icon was clicked!")
+        let range = textfield.selectedRange
+        let fullText = textfield.text as NSString
+        let lineRange = fullText.lineRange(for: NSRange(location: range.location, length: 0))
+        let currentLine = fullText.substring(with: lineRange)
+        
+        let attribute : [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: 20.0, weight: .regular)        ]
+        
+        if currentLine.count > 0{
+            //Add [\n • ]
+            let bulletIconNewLine : String = "\(currentLine)\n• "
+            let attributedBullet = NSAttributedString(string: bulletIconNewLine, attributes: attribute)
+            
+            textfield.textStorage.replaceCharacters(in: lineRange, with: attributedBullet)
+            
+            let newCaretLocation = lineRange.location + currentLine.count + 3
+            textfield.selectedRange = NSRange(location: newCaretLocation + 1, length: 0)
+        }else{
+            // Add [ • ]
+            let bulletIconNoNewLine : String = "• "
+            let attributedBullet = NSAttributedString(string: bulletIconNoNewLine, attributes: attribute)
+            textfield.textStorage.replaceCharacters(in: lineRange, with: attributedBullet)
+            
+            let newCaretLocation = lineRange.location + 2
+            textfield.selectedRange = NSRange(location: newCaretLocation + 1, length: 0)
+        }
     }
+    
+    
+    func getCurrentLineText() -> String? {
+        let range = textfield.selectedRange //Cursor position
+        let fullText = textfield.text as NSString //TextView text -> NSString, purpose = to use lineRange
+        //Get range between previous \n and next \n
+        let lineRange = fullText.lineRange(for: NSRange(location: range.location, length: 0))
+        let lineText = fullText.substring(with: lineRange)  //Convert NSRange -> text from UITextView
+        
+        return lineText
+    }
+    
     
     @objc func toDoIconTapped(){
-        print("To Do list tapped")
+        var range = textfield.selectedRange
+        let fullText = textfield.text as NSString
+        let lineRange = fullText.lineRange(for: NSRange(location: range.location, length: 0))
+        let currentLine = fullText.substring(with: lineRange)
+        
+        if currentLine == ""{
+            addCheckMark(range: range)
+        }else{
+            let endOfLine = lineRange.length + lineRange.location
+            let attributeString = NSAttributedString(string: "\n", attributes: [.font: UIFont.systemFont(ofSize: 20.0)])
+            print(endOfLine)
+            print(lineRange.location)
+            
+            textfield.textStorage.insert(attributeString, at: endOfLine)
+            let newCursorPosition = endOfLine + 1
+            textfield.selectedRange = NSRange(location: newCursorPosition, length: 0)
+            range = textfield.selectedRange
+            addCheckMark(range: range)
+        }
+        
+        //If currentLine is blank?
+        //Yes -> Add Icon at cursor.location, Add 5 spaces to texfield.textStorage, move cursor.location
+        //No -> Add \n and move to new cursor.location + 1, add Icon at the new cursor.location, add 5 spaces to textfield.textStorage, move cursor.location
+
     }
     
+    func addCheckMark(range: NSRange){
+        let button = UIButton(type: .custom)
+                let config = UIImage.SymbolConfiguration(pointSize: 20.0, weight: .regular)
+                button.setImage(UIImage(systemName: "checkmark.circle", withConfiguration: config), for: .normal)
+                button.tintColor = .workNavy
+                button.addTarget(self, action: #selector(checkMarkTapped(_:)), for: .touchUpInside)
+                
+                
+                let style = NSMutableParagraphStyle()
+                style.firstLineHeadIndent = 0
+                style.headIndent = 30
+                
+                let attribute : [NSAttributedString.Key: Any] = [
+                    .font : UIFont.systemFont(ofSize: 20.0),
+                    .paragraphStyle : style
+                ]
+                
+                let spacer = NSAttributedString(string: "     ", attributes: attribute)
+                textfield.textStorage.insert(spacer, at: range.location)
+                
+                textfield.layoutManager.ensureLayout(for: textfield.textContainer) //Update layout after spacer is added
+               
+                let glyphIndex = textfield.layoutManager.glyphIndexForCharacter(at: range.location)
+                let lineRect = textfield.layoutManager.lineFragmentRect(forGlyphAt: glyphIndex, effectiveRange: nil)
+                
+                button.frame = CGRect(
+                    x: textfield.textContainerInset.left,
+                    y: lineRect.origin.y + textfield.textContainerInset.top,
+                    width: 25,
+                    height: 25
+                )
+                button.tag = range.location
+                print("button's tag = \(button.tag)")
+                textfield.addSubview(button)
+                textfield.selectedRange = NSRange(location: range.location + 5, length: 0)
+    }
+    
+    @objc func checkMarkTapped(_ sender: UIButton){
+        sender.isSelected.toggle()
+        let symbolName = sender.isSelected ? "checkmark.circle.fill" : "checkmark.circle"
+        let config = UIImage.SymbolConfiguration(pointSize: 20.0, weight: .regular)
+        sender.setImage(UIImage(systemName: symbolName, withConfiguration: config), for: .normal)
+        
+        let feedback = UISelectionFeedbackGenerator()
+        feedback.selectionChanged()
+    }
+    
+
     @objc func imageIconTapped(){
         print("Image icon pressed")
     }
@@ -152,6 +314,7 @@ class ToDoViewController: UIViewController{
         textfield.textStorage.replaceCharacters(in: range, with: attributedString)
 
     }
+
     
     func setUpCategories(){
         categoryStackView.layer.cornerRadius = 15.0
@@ -165,12 +328,12 @@ class ToDoViewController: UIViewController{
             config.cornerStyle = .capsule
             config.baseForegroundColor = .white
             
+            
             config.titleTextAttributesTransformer = UIConfigurationTextAttributesTransformer{ incoming in
                 var outgoing = incoming
                 outgoing.font = UIFont.systemFont(ofSize: 14.0, weight: .semibold)
                 return outgoing
             }
-            
             
             button.configuration = config
             button.setContentCompressionResistancePriority(.required, for: .horizontal)
@@ -181,7 +344,30 @@ class ToDoViewController: UIViewController{
     }
     
     @objc func categoryTapped(_ sender: UIButton){
-        print("Selected category: \(sender.configuration?.title ?? "")")
+        guard let tappedTitle = sender.configuration?.title else {return}
+        if currentSelectedCategory != "" || currentSelectedCategory != nil{
+            if currentSelectedCategory == tappedTitle{
+                currentSelectedCategory = ""
+            }else{
+                currentSelectedCategory = tappedTitle
+            }
+        }else{
+            currentSelectedCategory = tappedTitle
+        }
+                
+        for case let button as UIButton in categoryStackView.arrangedSubviews{
+            let isSelected = (button.configuration?.title == currentSelectedCategory)
+            var updateConfig = button.configuration
+            
+            if isSelected{
+                updateConfig?.background.strokeColor = .darkGray
+                updateConfig?.background.strokeWidth = 2.5
+            }else{
+                updateConfig?.background.strokeColor = .clear
+                updateConfig?.background.strokeWidth = 0.0
+            }
+            button.configuration = updateConfig
+        }
     }
     
     func setUIForTextFields(){
@@ -194,6 +380,7 @@ class ToDoViewController: UIViewController{
     }
     
     func setUIForButtons(){
+        //Weekly and Monthly View Buttons
         let buttonBgColor = UIColor(red: 192.0 / 255.0, green: 202.0 / 255.0, blue: 201.0 / 255.0, alpha: 1.0)
         var config = UIButton.Configuration.filled()
         
@@ -201,39 +388,79 @@ class ToDoViewController: UIViewController{
         config.background.cornerRadius = 15.0
         config.baseForegroundColor = UIColor.darkGray
         
-        var container = AttributeContainer()
-        container.font = UIFont.systemFont(ofSize: 18.0, weight: .semibold)
+        var fontContainer = AttributeContainer()
+        fontContainer.font = UIFont.systemFont(ofSize: 18.0, weight: .semibold)
         
-        config.attributedTitle = AttributedString("Weekly View", attributes: container)
+        config.attributedTitle = AttributedString("Weekly View", attributes: fontContainer)
         weeklyButton.configuration = config
         
-        config.attributedTitle = AttributedString("Yearly View", attributes: container)
+        config.attributedTitle = AttributedString("Yearly View", attributes: fontContainer)
         yearlyButton.configuration = config
         
-        let antiqueIvoryColor = UIColor(red: 209.0/255.0, green: 187.0/255.0, blue: 145.0/255.0, alpha: 1.0)
-        zoomButton.backgroundColor = antiqueIvoryColor
-        currentLocationButton.backgroundColor = antiqueIvoryColor
-        otherLocationButton.backgroundColor = antiqueIvoryColor
-        addButton.backgroundColor = .darkGray
+        //Location Buttons
+        let locationBgColor = UIColor(red: 209.0/255.0, green: 187.0/255.0, blue: 145.0/255.0, alpha: 1.0)
+        var locationConfig = UIButton.Configuration.filled()
         
-        zoomButton.titleLabel?.textColor = .white
-        otherLocationButton.titleLabel?.textColor = .white
-        currentLocationButton.titleLabel?.textColor = .white
-        addButton.titleLabel?.textColor = .white
-
-        zoomButton.layer.cornerRadius = 15.0
-        currentLocationButton.layer.cornerRadius = 15.0
-        otherLocationButton.layer.cornerRadius = 15.0
-        addButton.layer.cornerRadius = 20.0
+        locationConfig.background.cornerRadius = 15.0
+        locationConfig.baseBackgroundColor = locationBgColor
+        locationConfig.baseForegroundColor = UIColor.white
         
-        let locationFont = UIFont.systemFont(ofSize: 14.0, weight: .semibold)
-        zoomButton.titleLabel?.font = locationFont
-        currentLocationButton.titleLabel?.font = locationFont
-        otherLocationButton.titleLabel?.font = locationFont
-        addButton.titleLabel?.font = UIFont.systemFont(ofSize: 20.0, weight: .bold)
+        var locationFontContainer = AttributeContainer()
+        locationFontContainer.font = UIFont.systemFont(ofSize: 14.0, weight: .semibold)
+        
+        let locationButtonsName : [String] = ["Zoom?", "Current Location?", "Other Location?"]
+        
+        for (index, button) in locationButtons.enumerated(){
+            locationConfig.attributedTitle = AttributedString("\(locationButtonsName[index])", attributes: locationFontContainer)
+            button.configuration = locationConfig
+            button.addTarget(self, action: #selector(locationTapped(_:)), for: .touchUpInside)
+        }
+        
+        //Add Buttons
+        var addButtonConfig = UIButton.Configuration.filled()
+        
+        addButtonConfig.baseBackgroundColor = UIColor.lightGray
+        addButtonConfig.baseForegroundColor = UIColor.darkGray
+        addButtonConfig.background.cornerRadius = 15.0
+        
+        var addButtonFontContainer = AttributeContainer()
+        addButtonFontContainer.font = UIFont.systemFont(ofSize: 20.0, weight: .bold)
+        
+        addButtonConfig.attributedTitle = AttributedString("Add", attributes: addButtonFontContainer)
+        addButton.configuration = addButtonConfig
+        addButton.addTarget(self, action: #selector(addButtonTapped(_:)), for: .touchUpInside)
+    }
+    
+    @objc func locationTapped(_ sender: UIButton){
+        guard let tappedTitle = sender.titleLabel?.text else {return}
+        
+        if currentSelectedLocation == tappedTitle {
+                currentSelectedLocation = ""
+            } else {
+                currentSelectedLocation = tappedTitle
+            }
+        
+        for button in locationButtons{
+            let isSelected = (button.configuration?.title == currentSelectedLocation)
+            var config = button.configuration
+            
+            config?.background.strokeWidth = isSelected ? 2.0 : 0.0
+            config?.background.strokeColor = .darkGray
+            
+            button.configuration = config
+        }
+    }
+    
+    @objc func addButtonTapped(_ sender: UIButton){
+        print("Add button is pressed")
+    }
+    
+    func setUpDatePicker(){
+        datePicker.minuteInterval = 15
     }
 }
 
+//MARK: - TextField, TextView Delegate
 extension ToDoViewController: UITextFieldDelegate, UITextViewDelegate{
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         taskTitle = textField.text
@@ -297,6 +524,181 @@ extension ToDoViewController: UITextFieldDelegate, UITextViewDelegate{
             }
         }
     }
+    
+    func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        //If "Enter"
+        //Get current Line text
+        //If the first strings == [•] or [1) / 2) ] , *to-do symbol*]
+        // If current line first string = [ • text...] then \n •
+        // If current line have • then remove •
+        if text == "\n"{
+            let nsString = textView.text as NSString
+            let lineRange = nsString.lineRange(for: range)
+            let currentLine = nsString.substring(with: lineRange)
+            let cleanLine = currentLine.trimmingCharacters(in: .whitespacesAndNewlines)
+            if cleanLine.isEmpty
+            {
+                return true
+            }
+            
+            if lineRange.location < textfield.textStorage.length{
+                let attrs = textfield.textStorage.attributes(at: lineRange.location, effectiveRange: nil)
+                let style = attrs[.paragraphStyle] as? NSParagraphStyle
+                
+                if style?.headIndent == 30{
+                    let tempCurrentLine = nsString.substring(with: lineRange)
+                    let tempCleanLine = tempCurrentLine.trimmingCharacters(in: .whitespacesAndNewlines)
+                    
+                    if !tempCurrentLine.hasPrefix("     ") {
+                        return true
+                    }
+                    
+                    if tempCleanLine.isEmpty{
+                        textfield.textStorage.replaceCharacters(in: lineRange, with: "")
+                        return false
+                    }
+                    
+                    let attribute: [NSAttributedString.Key: Any] = [
+                        .font: UIFont.systemFont(ofSize: 20.0),
+                        .paragraphStyle: style!
+                    ]
+                    let newLineWithSpacer = NSAttributedString(string: "\n", attributes: attribute)
+                    textfield.textStorage.replaceCharacters(in: range, with: newLineWithSpacer)
+                    
+                    addCheckMark(range: NSRange(location: range.location + 1, length: 0))
+                    return false
+                }
+            }else{
+                return true
+            }
+            
+            
+            let firstChar = currentLine[currentLine.startIndex]
+            if firstChar == "•"{
+                if cleanLine == "•"{
+                    textView.textStorage.replaceCharacters(in: lineRange, with: "")
+                    return false
+                }
+                let attribute : [NSAttributedString.Key: Any] = [
+                    .font: UIFont.systemFont(ofSize: 20.0, weight: .regular)
+                ]
+                let addBulletList = NSAttributedString(string: "\n• ", attributes: attribute)
+                textView.textStorage.replaceCharacters(in: range, with: addBulletList)
+                
+                let newCursorLocatoin = range.location + 3
+                textView.selectedRange = NSRange(location: newCursorLocatoin, length: 0)
+                return false
+            }//end bulletList
+            
+            if let firstNum = Int(String(firstChar)){
+                guard let secondCharIndex =  currentLine.index(currentLine.startIndex, offsetBy: 1, limitedBy: currentLine.index(before: currentLine.endIndex)) else{
+                    return true
+                }
+                
+                if currentLine[secondCharIndex] == ")"{
+                    if cleanLine == "\(firstChar))"{
+                        textView.textStorage.replaceCharacters(in: lineRange, with: "")
+                        return false
+                    }
+                    let nextNum = firstNum + 1
+                    let attribute : [NSAttributedString.Key: Any] = [
+                        .font: UIFont.systemFont(ofSize: 20.0, weight: .regular)
+                    ]
+                    let addNumberList = NSAttributedString(string: "\n\(nextNum)) ", attributes: attribute)
+                    textView.textStorage.replaceCharacters(in: range, with: addNumberList)
+                    
+                    let newCursorLocation = range.location + 4
+                    textView.selectedRange = NSRange(location: newCursorLocation, length: 0)
+                    
+                    return false
+                }
+            } //end NumberList
+           return true
+        }//end "\n"
+        if text == ""{
+            print("delete button")
+            let fullText = textView.text as NSString
+            let deletedChar = fullText.substring(with: range)
+            if deletedChar == " "{
+                let currentRange = textView.selectedRange
+                let lineRange = fullText.lineRange(for: currentRange)
+                let currentLine = fullText.substring(with: lineRange)
+                //get the text of the current line until the deleted whitespace character
+                let relativeLocation = range.location - lineRange.location
+                if currentLine.hasPrefix("    ") && relativeLocation < 5{
+                    print("\(lineRange.location)")
+                    removeButtonAt(tagLocation: lineRange.location)
+                    
+                    //Remove the spaces and move cursor location
+                    if lineRange.location == 0{
+                        let style = NSMutableParagraphStyle()
+                        style.firstLineHeadIndent = 0
+                        style.headIndent = 0
+                        
+                        let defaultAttributes: [NSAttributedString.Key: Any] = [
+                            .font: UIFont.systemFont(ofSize: 20.0, weight: .regular),
+                            .paragraphStyle: style
+                        ]
+                        
+                        let newLine = NSAttributedString(string: "\n", attributes: defaultAttributes)
+                        print("newLIne : (\(newLine))")
+                        
+                        textView.textStorage.beginEditing()
+                        textView.textStorage.replaceCharacters(in: lineRange, with: newLine)
+                        textView.textStorage.endEditing()
+                        textView.selectedRange = NSRange(location: 0, length: 0)
+                        
+                        return false
+                    }else{
+                        print("else run")
+                        textView.textStorage.replaceCharacters(in: lineRange, with: "")
+                        textView.selectedRange = NSRange(location: lineRange.location, length: 0)
+                        return false
+                    }
+                }else{
+                    return true
+                }
+                
+            }else{
+                return true
+            }
+        }
+        
+        return true
+    }//end function
+    
+    func removeButtonAt(tagLocation: Int){
+        if let button = textfield.viewWithTag(tagLocation){
+            button.removeFromSuperview()
+        }
+        for subview in textfield.subviews {
+            if let button = subview as? UIButton {
+                print("Existing button tag:", button.tag)
+            }
+        }
+    }
+    
+    func textView(_ textView: UITextView,
+                  shouldInteractWith textAttachment: NSTextAttachment,
+                  in characterRange: NSRange,
+                  interaction: UITextItemInteraction) -> Bool {
+        
+        guard let checklist = textAttachment as? ChecklistAttachment else {
+            return true
+        }
+        
+        checklist.isChecked.toggle()
+        
+        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
+        
+        if checklist.isChecked {
+            checklist.image = UIImage(systemName: "checkmark.circle.fill", withConfiguration: config)
+        } else {
+            checklist.image = UIImage(systemName: "circle", withConfiguration: config)
+        }
+        
+        return false
+    }
+    
+    
 }
-
-
