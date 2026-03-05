@@ -12,10 +12,15 @@ class ChecklistAttachment: NSTextAttachment {
     var isChecked: Bool = false
 }
 
-class ToDoViewController: UIViewController, UIGestureRecognizerDelegate{
+class TodoAttachment: NSTextAttachment {
+    var type: String?
+}
+
+class ToDoViewController: UIViewController,  UIImagePickerControllerDelegate, UINavigationControllerDelegate{
+    
     @IBOutlet weak var background : UIView!
     @IBOutlet weak var weeklyButton : UIButton!
-    @IBOutlet weak var yearlyButton : UIButton!
+    @IBOutlet weak var monthlyButton : UIButton!
     @IBOutlet weak var titleLabel : UITextField!
     @IBOutlet weak var textFieldContainer : UIView!
     @IBOutlet weak var textfield : UITextView!
@@ -32,7 +37,8 @@ class ToDoViewController: UIViewController, UIGestureRecognizerDelegate{
     @IBOutlet weak var currentLocationButton : UIButton!
     @IBOutlet weak var otherLocationButton: UIButton!
     @IBOutlet weak var addButton : UIButton!
-    
+    let imagePicker = UIImagePickerController()
+
     
     private let categories = ["Personal", "Work", "School", "Home", "Relationship", "Family", "Finance", "Health"]
     private let categoriesColor : [UIColor] = [
@@ -49,7 +55,8 @@ class ToDoViewController: UIViewController, UIGestureRecognizerDelegate{
     private var locationButtons: [UIButton] {
         return [zoomButton, currentLocationButton, otherLocationButton]
     }
-    
+
+    var allToDos : [ToDoStruct] = []
     var taskTitle : String? = ""
     var taskTextField : String? = ""
     var date = Date()
@@ -68,15 +75,51 @@ class ToDoViewController: UIViewController, UIGestureRecognizerDelegate{
         setUpDatePicker()
         textfield.delegate = self
         titleLabel.delegate = self
+        imagePicker.delegate = self
         _ = textfield.layoutManager
     }
-
-    @IBAction func weeklyViewPressed(_ sender: UIButton){
-        performSegue(withIdentifier: "goToToDoWeeklyView", sender: self)
+    
+    @IBAction func weeklyViewPressed(_ sender: UIButton) {
+        fetchingDataInWeeklyFormat{ [weak self] weeklyDate in
+            self?.performSegue(withIdentifier: "goToToDoWeeklyView", sender: weeklyDate)
+        }
+    }
+    
+    func fetchingDataInWeeklyFormat(completion: @escaping ([Date: [ToDoStruct]]) -> Void){
+        toDoManager.shared.loadData{ [weak self] in
+            DispatchQueue.main.async{
+                guard self != nil else { return }
+                 let allToDo = toDoManager.shared.allToDo
+                
+                var weeklyToDos : [Date: [ToDoStruct]] = [:]
+                let calendar = Calendar.current
+                
+                for todo in allToDo{
+                    if let weekDate = calendar.dateInterval(of: .weekOfYear, for: todo.date)?.start {
+                        weeklyToDos[weekDate, default: []].append(todo)
+                    }
+                }
+                completion(weeklyToDos)
+            }
+        }
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "goToToDoWeeklyView"{
+            if let destinationVC = segue.destination as? ToDoWeeklyViewVC{
+                destinationVC.weeklyToDos = (sender as? [Date: [ToDoStruct]] ?? [:])
+            }
+        }else if segue.identifier == "goToToDoMonthlyView"{
+            //Pass in the YearlyToDo Data
+        }
     }
     
     @IBAction func monthlyViewPressed(_ sender: UIButton){
         performSegue(withIdentifier: "goToToDoMonthlyView", sender: self)
+    }
+    
+    @IBAction func dateChanged(_ sender: UIDatePicker){
+        date = sender.date
     }
     
     
@@ -85,6 +128,7 @@ class ToDoViewController: UIViewController, UIGestureRecognizerDelegate{
         background.backgroundColor = UIColor(red: 249.0 / 255.0, green: 244.0 / 255.0, blue: 218.0 / 255.0, alpha: 1.0)
         background.layer.cornerRadius = 40.0
         textFieldContainer.backgroundColor = .white
+        textfield.text = "Task..."
     }
     
     func setupUIViews(){
@@ -122,6 +166,70 @@ class ToDoViewController: UIViewController, UIGestureRecognizerDelegate{
         strikeThroughIcon.addGestureRecognizer(tapStrikeThroughIcon)
         
         setUpCategories()
+    }
+    
+    func setUIForTextFields(){
+        titleLabel.borderStyle = .none
+        titleLabel.textColor = .darkGray
+        
+        
+        
+        textFieldContainer.layer.cornerRadius = 15.0
+        textfield.textContainerInset = UIEdgeInsets(top: 10.0, left: 8.0, bottom: 10.0, right: 10.0)
+        textfield.layer.cornerRadius = 15.0
+        textfield.textColor = .lightGray
+        let tapTextViewForToDo = UITapGestureRecognizer(
+                target: self,
+                action: #selector(handleToDoTap(_:))
+            )
+        
+        tapTextViewForToDo.cancelsTouchesInView = false
+        tapTextViewForToDo.delegate = self
+        textfield.addGestureRecognizer(tapTextViewForToDo)
+    }
+    
+    @objc func handleToDoTap(_ sender: UITapGestureRecognizer){
+        guard let txtView = sender.view as? UITextView else {return}
+        
+        let tapLocation = sender.location(in: txtView)
+        let layoutManager = txtView.layoutManager
+        let textContainer = txtView.textContainer
+        
+        var location = tapLocation
+        location.x -= txtView.textContainerInset.left
+        location.y -= txtView.textContainerInset.top
+        
+        let charIndex = layoutManager.characterIndex(
+            for: location,
+            in: textContainer,
+            fractionOfDistanceBetweenInsertionPoints: nil
+        )
+        
+        guard charIndex < txtView.textStorage.length else {
+            return
+        }
+        
+        let attributes = txtView.textStorage.attributes(at: charIndex, effectiveRange: nil)
+        
+        guard let attachment = attributes[.attachment] as? TodoAttachment else {
+            return
+        }
+        
+        let currentSelectedRange = txtView.selectedRange
+
+            if attachment.type == "checkmark.circle"{
+                attachment.type = "checkmark.circle.fill"
+                attachment.image = UIImage(systemName: "checkmark.circle.fill")
+            }else{
+                attachment.type = "checkmark.circle"
+                attachment.image = UIImage(systemName: "checkmark.circle")
+            }
+            
+            txtView.layoutManager.invalidateDisplay(
+                forCharacterRange: NSRange(location: charIndex, length: 1)
+            )
+            txtView.selectedRange = currentSelectedRange
+        
     }
     
     //StringToAdd, Cursor location, lineRange = NSRange
@@ -200,18 +308,6 @@ class ToDoViewController: UIViewController, UIGestureRecognizerDelegate{
         }
     }
     
-    
-    func getCurrentLineText() -> String? {
-        let range = textfield.selectedRange //Cursor position
-        let fullText = textfield.text as NSString //TextView text -> NSString, purpose = to use lineRange
-        //Get range between previous \n and next \n
-        let lineRange = fullText.lineRange(for: NSRange(location: range.location, length: 0))
-        let lineText = fullText.substring(with: lineRange)  //Convert NSRange -> text from UITextView
-        
-        return lineText
-    }
-    
-    
     @objc func toDoIconTapped(){
         var range = textfield.selectedRange
         let fullText = textfield.text as NSString
@@ -232,73 +328,83 @@ class ToDoViewController: UIViewController, UIGestureRecognizerDelegate{
             range = textfield.selectedRange
             addCheckMark(range: range)
         }
-        
-        //If currentLine is blank?
-        //Yes -> Add Icon at cursor.location, Add 5 spaces to texfield.textStorage, move cursor.location
-        //No -> Add \n and move to new cursor.location + 1, add Icon at the new cursor.location, add 5 spaces to textfield.textStorage, move cursor.location
 
     }
+    //checkmark.circle
+    //checkmark.circle.fill
     
     func addCheckMark(range: NSRange){
-        let button = UIButton(type: .custom)
-                let config = UIImage.SymbolConfiguration(pointSize: 20.0, weight: .regular)
-                button.setImage(UIImage(systemName: "checkmark.circle", withConfiguration: config), for: .normal)
-                button.tintColor = .workNavy
-                button.addTarget(self, action: #selector(checkMarkTapped(_:)), for: .touchUpInside)
-                
-                
-                let style = NSMutableParagraphStyle()
-                style.firstLineHeadIndent = 0
-                style.headIndent = 30
-                
-                let attribute : [NSAttributedString.Key: Any] = [
-                    .font : UIFont.systemFont(ofSize: 20.0),
-                    .paragraphStyle : style
-                ]
-                
-                let spacer = NSAttributedString(string: "     ", attributes: attribute)
-                textfield.textStorage.insert(spacer, at: range.location)
-                
-                textfield.layoutManager.ensureLayout(for: textfield.textContainer) //Update layout after spacer is added
-               
-                let glyphIndex = textfield.layoutManager.glyphIndexForCharacter(at: range.location)
-                let lineRect = textfield.layoutManager.lineFragmentRect(forGlyphAt: glyphIndex, effectiveRange: nil)
-                
-                button.frame = CGRect(
-                    x: textfield.textContainerInset.left,
-                    y: lineRect.origin.y + textfield.textContainerInset.top,
-                    width: 25,
-                    height: 25
-                )
-                button.tag = range.location
-                print("button's tag = \(button.tag)")
-                textfield.addSubview(button)
-                textfield.selectedRange = NSRange(location: range.location + 5, length: 0)
-    }
-    
-    @objc func checkMarkTapped(_ sender: UIButton){
-        sender.isSelected.toggle()
-        let symbolName = sender.isSelected ? "checkmark.circle.fill" : "checkmark.circle"
-        let config = UIImage.SymbolConfiguration(pointSize: 20.0, weight: .regular)
-        sender.setImage(UIImage(systemName: symbolName, withConfiguration: config), for: .normal)
+        let w = CGFloat(20.0)
+        let h = CGFloat(20.0)
+        var location = range.location
         
-        let feedback = UISelectionFeedbackGenerator()
-        feedback.selectionChanged()
+        let todoAttachment = TodoAttachment()
+        todoAttachment.type = "checkmark.circle"
+        todoAttachment.image = UIImage(systemName: "checkmark.circle")
+        todoAttachment.bounds = CGRect(x: 0, y: -5, width: w, height: h)
+                
+        let todoAttribute = NSAttributedString(attachment: todoAttachment,
+                                                       attributes: [.font: UIFont.systemFont(ofSize: 20.0)])
+        
+        let spaceAttribute = NSAttributedString(string: " ", attributes: [.font: UIFont.systemFont(ofSize: 20.0)])
+        textfield.textStorage.insert(todoAttribute, at: location)
+        location = location + 1
+        textfield.textStorage.insert(spaceAttribute, at: location)
+        location = location + 1
+        
+        textfield.selectedRange = NSRange(location: location, length: 0)
     }
-    
 
     @objc func imageIconTapped(){
-        print("Image icon pressed")
+        openImagePicker()
+    }
+    
+    func openImagePicker(){
+        imagePicker.sourceType = .photoLibrary
+        imagePicker.allowsEditing = true
+        
+        present(imagePicker, animated: true)
+    }
+    
+    func imagePickerController(_ sender: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]){
+        imagePicker.dismiss(animated: true)
+        guard let selectedImage = info[.editedImage] as? UIImage else {return}
+            
+        insertImageIntoTextView(selectedImage)
+    }
+    
+    func insertImageIntoTextView(_ image: UIImage){
+        textfield.becomeFirstResponder()
+        
+        let width = CGFloat(image.size.width) / 8.0
+        let height = CGFloat(image.size.height) / 8.0
+        
+        let attachment = NSTextAttachment()
+        attachment.image = image
+        attachment.bounds = CGRect(x: 0, y: 0, width: width, height: height)
+        
+        let imageString = NSAttributedString(attachment: attachment, attributes: [.font: UIFont.systemFont(ofSize: 20.0, weight: .regular)])
+        let mutableAttributedString = NSMutableAttributedString(attributedString: textfield.attributedText)
+        
+        let selectedRange = textfield.selectedRange
+        mutableAttributedString.insert(imageString, at: selectedRange.location)
+        
+        textfield.attributedText = mutableAttributedString
+        textfield.selectedRange = NSRange(location: selectedRange.location + 1, length: 0)
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        imagePicker.dismiss(animated: true, completion: nil)
     }
     
     @objc func strikeThroughTapped(){
-        guard let currentSelectedText = currentSelectedText, !currentSelectedText.isEmpty else { return }
+        guard let selectedText = currentSelectedText, !selectedText.isEmpty else { return }
         guard let range = currentSelectedRange else {return}
         
         let currentAttributes = textfield.attributedText.attributes(at: range.location, effectiveRange: nil)
         let isStrikeThrough = (currentAttributes[.strikethroughStyle] as? Int ?? 0) > 0
         
-        let attributedString = NSMutableAttributedString(string: currentSelectedText)
+        let attributedString = NSMutableAttributedString(string: selectedText)
         
         if isStrikeThrough{
             attributedString.addAttributes([
@@ -317,8 +423,10 @@ class ToDoViewController: UIViewController, UIGestureRecognizerDelegate{
 
     
     func setUpCategories(){
-        categoryStackView.layer.cornerRadius = 15.0
+        categoryStackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
+        categoryStackView.layer.cornerRadius = 15.0
+        
         for (index, category) in categories.enumerated() {
             let button = UIButton(configuration: .filled())
             let i = index
@@ -348,6 +456,7 @@ class ToDoViewController: UIViewController, UIGestureRecognizerDelegate{
         if currentSelectedCategory != "" || currentSelectedCategory != nil{
             if currentSelectedCategory == tappedTitle{
                 currentSelectedCategory = ""
+                
             }else{
                 currentSelectedCategory = tappedTitle
             }
@@ -370,15 +479,6 @@ class ToDoViewController: UIViewController, UIGestureRecognizerDelegate{
         }
     }
     
-    func setUIForTextFields(){
-        titleLabel.borderStyle = .none
-        titleLabel.textColor = .darkGray
-        textFieldContainer.layer.cornerRadius = 15.0
-        textfield.textContainerInset = UIEdgeInsets(top: 10.0, left: 8.0, bottom: 10.0, right: 10.0)
-        textfield.layer.cornerRadius = 15.0
-        textfield.textColor = .lightGray
-    }
-    
     func setUIForButtons(){
         //Weekly and Monthly View Buttons
         let buttonBgColor = UIColor(red: 192.0 / 255.0, green: 202.0 / 255.0, blue: 201.0 / 255.0, alpha: 1.0)
@@ -394,8 +494,8 @@ class ToDoViewController: UIViewController, UIGestureRecognizerDelegate{
         config.attributedTitle = AttributedString("Weekly View", attributes: fontContainer)
         weeklyButton.configuration = config
         
-        config.attributedTitle = AttributedString("Yearly View", attributes: fontContainer)
-        yearlyButton.configuration = config
+        config.attributedTitle = AttributedString("Monthly View", attributes: fontContainer)
+        monthlyButton.configuration = config
         
         //Location Buttons
         let locationBgColor = UIColor(red: 209.0/255.0, green: 187.0/255.0, blue: 145.0/255.0, alpha: 1.0)
@@ -451,8 +551,87 @@ class ToDoViewController: UIViewController, UIGestureRecognizerDelegate{
         }
     }
     
+    func cleanTextView() -> NSAttributedString {
+        var replacements: [(range: NSRange, replacement: String)] = []
+        let mutable = NSMutableAttributedString(attributedString: textfield.attributedText)
+        mutable.enumerateAttribute(.attachment,
+                                   in: NSRange(location: 0, length: mutable.length),
+                                   options: []) { value, range, _ in
+            
+            if let attachment = value as? TodoAttachment {
+                if attachment.type == "checkmark.circle" {
+                    replacements.append((range, "[TODO_CHECKMARK]"))
+                } else if attachment.type == "checkmark.circle.fill" {
+                    replacements.append((range, "[TODO_CHECKMARK_FILL]"))
+                }
+            }
+        }
+        
+        for item in replacements.reversed() {
+            mutable.replaceCharacters(in: item.range,
+                                      with: NSAttributedString(string: item.replacement, attributes: [.font: UIFont.systemFont(ofSize: 20.0, weight: .regular)]))
+        }
+        
+        return mutable
+    }
+    
     @objc func addButtonTapped(_ sender: UIButton){
-        print("Add button is pressed")
+        view.endEditing(true)
+       if taskTitle == ""{
+            let overLayerView = OverLayerView()
+            overLayerView.appear(sender: self)
+            
+       }else{
+           let cleanedString = cleanTextView()
+           let locationString = currentSelectedLocation?.dropLast()
+           
+           if let data = try? cleanedString.data(
+               from: NSRange(location: 0, length: cleanedString.length),
+               documentAttributes: [.documentType: NSAttributedString.DocumentType.rtf]
+           ){
+               let base64String = data.base64EncodedString()
+               let todo = ToDoStruct(title: taskTitle!,
+                                     description: base64String,
+                                     date: date,
+                                     category: currentSelectedCategory!,
+                                     location: String(locationString!))
+               
+               toDoManager.shared.addToDo(todo){ [ weak self ] complete in
+                   self?.handleCompletion(complete)
+               }
+           }
+       }
+    }
+    
+    func handleCompletion(_ success: Bool){
+        if success{
+            print("Added")
+            clearAll()
+        }else{
+            print("Failed")
+        }
+    }
+    
+    func clearAll(){
+        titleLabel.text = "Title..."
+        titleLabel.textColor = UIColor.darkGray
+        
+        textfield.attributedText = NSAttributedString(string: "Task...", attributes: [
+            .font : UIFont.systemFont(ofSize: 20.0, weight: .regular),
+            .foregroundColor : UIColor.lightGray
+        ])
+        datePicker.date = Date()
+        allToDos = []
+        taskTitle = ""
+        taskTextField = ""
+        date = Date()
+        currentSelectedText = ""
+        currentSelectedCategory = ""
+        currentSelectedLocation = ""
+        isStrikeThrough = false
+        
+        setUpCategories()
+        setUIForButtons()
     }
     
     func setUpDatePicker(){
@@ -505,6 +684,8 @@ extension ToDoViewController: UITextFieldDelegate, UITextViewDelegate{
         if textView.text.isEmpty{
             textView.text = "Task..."
             textView.textColor = UIColor.lightGray
+        }else{
+            taskTextField = textView.text
         }
     }
     
@@ -519,18 +700,12 @@ extension ToDoViewController: UITextFieldDelegate, UITextViewDelegate{
             if let textRange = textView.selectedTextRange{
                 if let text = textView.text(in: textRange){
                     self.currentSelectedText = text
-                    print("User selected: \(text)")
                 }
             }
         }
     }
     
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
-        //If "Enter"
-        //Get current Line text
-        //If the first strings == [•] or [1) / 2) ] , *to-do symbol*]
-        // If current line first string = [ • text...] then \n •
-        // If current line have • then remove •
         if text == "\n"{
             let nsString = textView.text as NSString
             let lineRange = nsString.lineRange(for: range)
@@ -614,91 +789,18 @@ extension ToDoViewController: UITextFieldDelegate, UITextViewDelegate{
                 }
             } //end NumberList
            return true
-        }//end "\n"
-        if text == ""{
-            print("delete button")
-            let fullText = textView.text as NSString
-            let deletedChar = fullText.substring(with: range)
-            if deletedChar == " "{
-                let currentRange = textView.selectedRange
-                let lineRange = fullText.lineRange(for: currentRange)
-                let currentLine = fullText.substring(with: lineRange)
-                //get the text of the current line until the deleted whitespace character
-                let relativeLocation = range.location - lineRange.location
-                if currentLine.hasPrefix("    ") && relativeLocation < 5{
-                    print("\(lineRange.location)")
-                    removeButtonAt(tagLocation: lineRange.location)
-                    
-                    //Remove the spaces and move cursor location
-                    if lineRange.location == 0{
-                        let style = NSMutableParagraphStyle()
-                        style.firstLineHeadIndent = 0
-                        style.headIndent = 0
-                        
-                        let defaultAttributes: [NSAttributedString.Key: Any] = [
-                            .font: UIFont.systemFont(ofSize: 20.0, weight: .regular),
-                            .paragraphStyle: style
-                        ]
-                        
-                        let newLine = NSAttributedString(string: "\n", attributes: defaultAttributes)
-                        print("newLIne : (\(newLine))")
-                        
-                        textView.textStorage.beginEditing()
-                        textView.textStorage.replaceCharacters(in: lineRange, with: newLine)
-                        textView.textStorage.endEditing()
-                        textView.selectedRange = NSRange(location: 0, length: 0)
-                        
-                        return false
-                    }else{
-                        print("else run")
-                        textView.textStorage.replaceCharacters(in: lineRange, with: "")
-                        textView.selectedRange = NSRange(location: lineRange.location, length: 0)
-                        return false
-                    }
-                }else{
-                    return true
-                }
-                
-            }else{
-                return true
-            }
         }
-        
         return true
     }//end function
     
-    func removeButtonAt(tagLocation: Int){
-        if let button = textfield.viewWithTag(tagLocation){
-            button.removeFromSuperview()
-        }
-        for subview in textfield.subviews {
-            if let button = subview as? UIButton {
-                print("Existing button tag:", button.tag)
-            }
-        }
+}
+
+extension ToDoViewController: UIGestureRecognizerDelegate {
+
+    func gestureRecognizer(
+        _ gestureRecognizer: UIGestureRecognizer,
+        shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer
+    ) -> Bool {
+        return true
     }
-    
-    func textView(_ textView: UITextView,
-                  shouldInteractWith textAttachment: NSTextAttachment,
-                  in characterRange: NSRange,
-                  interaction: UITextItemInteraction) -> Bool {
-        
-        guard let checklist = textAttachment as? ChecklistAttachment else {
-            return true
-        }
-        
-        checklist.isChecked.toggle()
-        
-        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .regular)
-        
-        if checklist.isChecked {
-            checklist.image = UIImage(systemName: "checkmark.circle.fill", withConfiguration: config)
-        } else {
-            checklist.image = UIImage(systemName: "circle", withConfiguration: config)
-        }
-        
-        return false
-    }
-    
-    
 }

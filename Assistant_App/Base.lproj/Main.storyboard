@@ -202,6 +202,9 @@
                                             <constraint firstAttribute="height" constant="30" id="03p-2s-oAp"/>
                                             <constraint firstAttribute="width" constant="250" id="Geb-Sb-77q"/>
                                         </constraints>
+                                        <connections>
+                                            <action selector="dateChanged:" destination="g8U-tG-Npb" eventType="valueChanged" id="Q4k-bo-HDN"/>
+                                        </connections>
                                     </datePicker>
                                     <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="7pF-v5-npy">
                                         <rect key="frame" x="20" y="481" width="322" height="30"/>
@@ -338,9 +341,10 @@
                         <outlet property="categoryScrollView" destination="7pF-v5-npy" id="JJN-Ph-3By"/>
                         <outlet property="categoryStackView" destination="voi-gw-bHb" id="Xek-Oi-t2W"/>
                         <outlet property="currentLocationButton" destination="sWA-2W-4gt" id="IWR-i8-kNN"/>
-                        <outlet property="datePicker" destination="Bdb-BL-OKt" id="nX3-nA-4iR"/>
+                        <outlet property="datePicker" destination="Bdb-BL-OKt" id="fT0-wF-yYh"/>
                         <outlet property="iconContainer" destination="Eel-Ox-hJR" id="l3b-B4-7KK"/>
                         <outlet property="imageIcon" destination="ZkD-FI-NIL" id="WRk-Fl-1N2"/>
+                        <outlet property="monthlyButton" destination="J6A-gt-4LI" id="5kk-Fz-J15"/>
                         <outlet property="numberListIcon" destination="jDD-d6-Put" id="ch2-Jc-VNI"/>
                         <outlet property="otherLocationButton" destination="0M9-O1-WUX" id="4uz-20-1Bd"/>
                         <outlet property="strikeThroughIcon" destination="LFW-Ju-uLg" id="iYF-qd-b5r"/>
@@ -349,7 +353,6 @@
                         <outlet property="titleLabel" destination="MTv-RD-UO8" id="DtK-RF-3Yn"/>
                         <outlet property="toDoListIcon" destination="c2Q-Bf-qsI" id="pfU-xw-POt"/>
                         <outlet property="weeklyButton" destination="jy4-NZ-ros" id="LBy-BY-2yg"/>
-                        <outlet property="yearlyButton" destination="J6A-gt-4LI" id="O0N-Po-UT7"/>
                         <outlet property="zoomButton" destination="bD0-mz-RIf" id="TvY-MN-bzs"/>
                         <segue destination="c3t-1M-15w" kind="show" identifier="goToToDoWeeklyView" id="UQW-Ks-N8s"/>
                         <segue destination="omy-i7-Gwz" kind="show" identifier="goToToDoMonthlyView" id="Vz6-RQ-JVG"/>
@@ -565,14 +568,29 @@
                     <view key="view" contentMode="scaleToFill" id="dT3-ow-ugg">
                         <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="dZT-bi-hUq">
+                                <rect key="frame" x="0.0" y="168" width="402" height="638"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                            </tableView>
+                        </subviews>
                         <viewLayoutGuide key="safeArea" id="Amj-al-gdW"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="Amj-al-gdW" firstAttribute="bottom" secondItem="dZT-bi-hUq" secondAttribute="bottom" id="Ouo-qm-0g7"/>
+                            <constraint firstItem="dZT-bi-hUq" firstAttribute="top" secondItem="Amj-al-gdW" secondAttribute="top" id="ZkH-o2-eFU"/>
+                            <constraint firstItem="dZT-bi-hUq" firstAttribute="leading" secondItem="Amj-al-gdW" secondAttribute="leading" id="c4b-O4-GuX"/>
+                            <constraint firstItem="Amj-al-gdW" firstAttribute="trailing" secondItem="dZT-bi-hUq" secondAttribute="trailing" id="zCV-ro-ZAP"/>
+                        </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="LqQ-do-8UZ"/>
+                    <connections>
+                        <outlet property="weeklyTable" destination="dZT-bi-hUq" id="xhs-j0-nLD"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fIB-Ro-9Zm" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3085" y="-538"/>
+            <point key="canvasLocation" x="3083.5820895522388" y="-538.21510297482837"/>
         </scene>
         <!--To Do Monthly ViewVC-->
         <scene sceneID="EyU-Wk-5ea">

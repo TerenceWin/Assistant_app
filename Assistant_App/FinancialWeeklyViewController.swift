@@ -238,6 +238,12 @@ extension Date{
         return formatter.string(from: self)
     }
     
+    func getDateInYYYYMMMDD() -> String{
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy MMM, dd"
+        return formatter.string(from: self)
+    }
+    
     func getDateAsInt() -> Int{
         let calendar = Calendar.current
         let components = calendar.dateComponents([.year, .month, .day, .hour], from: self)

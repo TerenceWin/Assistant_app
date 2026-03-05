@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="23727" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="23721"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="OverLayerView" customModule="Assistant_App" customModuleProvider="target">
+            <connections>
+                <outlet property="backView" destination="JHR-rt-vFM" id="ocN-Uu-uBG"/>
+                <outlet property="contentView" destination="08p-UG-Ebm" id="XDq-oR-hMp"/>
+                <outlet property="okButton" destination="gzf-1A-qj7" id="AUZ-Re-19W"/>
+                <outlet property="popLabel" destination="aMA-Ut-qOU" id="0gt-Q8-gMR"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="JHR-rt-vFM">
+                    <rect key="frame" x="0.0" y="118" width="393" height="666"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="08p-UG-Ebm">
+                            <rect key="frame" x="75" y="150" width="243" height="316"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Please Select all the Shit you need to select " textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="aMA-Ut-qOU">
+                                    <rect key="frame" x="30" y="90" width="183" height="40.666666666666657"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <nil key="textColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="gzf-1A-qj7">
+                                    <rect key="frame" x="97.666666666666657" y="180.66666666666669" width="48" height="35"/>
+                                    <color key="backgroundColor" red="0.0" green="0.98106676339999999" blue="0.57369142770000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <state key="normal" title="Button"/>
+                                    <buttonConfiguration key="configuration" style="plain" title="OK"/>
+                                    <connections>
+                                        <action selector="doneButtonAction:" destination="-1" eventType="touchUpInside" id="eVI-Fm-qPi"/>
+                                    </connections>
+                                </button>
+                            </subviews>
+                            <color key="backgroundColor" systemColor="systemBlueColor"/>
+                            <constraints>
+                                <constraint firstItem="aMA-Ut-qOU" firstAttribute="top" secondItem="08p-UG-Ebm" secondAttribute="top" constant="90" id="5Q5-R3-bz6"/>
+                                <constraint firstAttribute="trailing" secondItem="aMA-Ut-qOU" secondAttribute="trailing" constant="30" id="kZW-YC-O8w"/>
+                                <constraint firstItem="aMA-Ut-qOU" firstAttribute="centerX" secondItem="08p-UG-Ebm" secondAttribute="centerX" id="qrc-0T-ZYR"/>
+                                <constraint firstItem="aMA-Ut-qOU" firstAttribute="leading" secondItem="08p-UG-Ebm" secondAttribute="leading" constant="30" id="vhJ-le-aLO"/>
+                                <constraint firstItem="gzf-1A-qj7" firstAttribute="top" secondItem="aMA-Ut-qOU" secondAttribute="bottom" constant="50" id="zjp-n8-v6k"/>
+                                <constraint firstItem="gzf-1A-qj7" firstAttribute="centerX" secondItem="08p-UG-Ebm" secondAttribute="centerX" id="zvf-qu-uTX"/>
+                            </constraints>
+                        </view>
+                    </subviews>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <constraints>
+                        <constraint firstAttribute="trailing" secondItem="08p-UG-Ebm" secondAttribute="trailing" constant="75" id="Aza-cR-eGE"/>
+                        <constraint firstAttribute="bottom" secondItem="08p-UG-Ebm" secondAttribute="bottom" constant="200" id="G87-a4-ool"/>
+                        <constraint firstItem="08p-UG-Ebm" firstAttribute="top" secondItem="JHR-rt-vFM" secondAttribute="top" constant="150" id="efD-aR-0Cg"/>
+                        <constraint firstItem="08p-UG-Ebm" firstAttribute="leading" secondItem="JHR-rt-vFM" secondAttribute="leading" constant="75" id="jl8-eG-8gp"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="fnl-2z-Ty3"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="JHR-rt-vFM" firstAttribute="leading" secondItem="fnl-2z-Ty3" secondAttribute="leading" id="0H1-2W-Kmp"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="bottom" secondItem="JHR-rt-vFM" secondAttribute="bottom" id="7gR-gW-T1Y"/>
+                <constraint firstItem="fnl-2z-Ty3" firstAttribute="trailing" secondItem="JHR-rt-vFM" secondAttribute="trailing" id="WME-6G-KBf"/>
+                <constraint firstItem="JHR-rt-vFM" firstAttribute="top" secondItem="fnl-2z-Ty3" secondAttribute="top" id="mM1-Jo-OA1"/>
+            </constraints>
+            <point key="canvasLocation" x="139.69465648854961" y="20.422535211267608"/>
+        </view>
+        <view contentMode="scaleToFill" id="Txm-b5-gFi">
+            <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <viewLayoutGuide key="safeArea" id="olV-Ic-jxa"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <point key="canvasLocation" x="-265" y="-137"/>
+        </view>
+    </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemBlueColor">
+            <color red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
+</document>
