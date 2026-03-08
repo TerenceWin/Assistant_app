@@ -27,7 +27,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="i1Z-Sr-gZx">
-                                <rect key="frame" x="121.66666666666669" y="398" width="150" height="50"/>
+                                <rect key="frame" x="121.66666666666669" y="468" width="150" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="JTG-Ri-jfg"/>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="150" id="vVj-Y0-8Jd"/>
@@ -44,7 +44,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eL6-1a-vZP">
-                                <rect key="frame" x="121.66666666666669" y="528" width="150" height="50"/>
+                                <rect key="frame" x="121.66666666666669" y="648" width="150" height="50"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="50" id="C17-wh-KhZ"/>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="150" id="cxC-um-L3L"/>
@@ -59,31 +59,13 @@
                                     <segue destination="g8U-tG-Npb" kind="show" identifier="MainToToDoView" id="8L7-Hd-EqD"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Itk-0d-IYH">
-                                <rect key="frame" x="121.66666666666669" y="658" width="150" height="50"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="50" id="eNA-5L-UFg"/>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="150" id="xOZ-Jd-0ra"/>
-                                </constraints>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" title="Workout">
-                                    <fontDescription key="titleFontDescription" type="system" weight="semibold" pointSize="24"/>
-                                    <color key="baseBackgroundColor" red="0.1577381618" green="0.2137750967" blue="0.31454623939999998" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
-                                </buttonConfiguration>
-                                <connections>
-                                    <action selector="workoutClicked:" destination="BYZ-38-t0r" eventType="touchUpInside" id="7PG-X9-qOz"/>
-                                    <segue destination="sJh-wu-qNO" kind="show" identifier="MainToWorkOutView" id="5Hh-up-D55"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="Itk-0d-IYH" firstAttribute="top" secondItem="eL6-1a-vZP" secondAttribute="bottom" constant="80" id="2sp-Aj-CwL"/>
                             <constraint firstItem="eL6-1a-vZP" firstAttribute="centerX" secondItem="i1Z-Sr-gZx" secondAttribute="centerX" id="IdI-0w-gSK"/>
-                            <constraint firstItem="Itk-0d-IYH" firstAttribute="centerX" secondItem="i1Z-Sr-gZx" secondAttribute="centerX" id="KnF-99-cRO"/>
-                            <constraint firstItem="i1Z-Sr-gZx" firstAttribute="top" secondItem="qhv-qb-jdX" secondAttribute="bottom" constant="100" id="LKV-oO-diP"/>
-                            <constraint firstItem="eL6-1a-vZP" firstAttribute="top" secondItem="i1Z-Sr-gZx" secondAttribute="bottom" constant="80" id="YIK-HA-YvK"/>
+                            <constraint firstItem="i1Z-Sr-gZx" firstAttribute="top" secondItem="qhv-qb-jdX" secondAttribute="bottom" constant="170" id="LKV-oO-diP"/>
+                            <constraint firstItem="eL6-1a-vZP" firstAttribute="top" secondItem="i1Z-Sr-gZx" secondAttribute="bottom" constant="130" id="YIK-HA-YvK"/>
                             <constraint firstItem="qhv-qb-jdX" firstAttribute="centerX" secondItem="8bC-Xf-vdC" secondAttribute="centerX" id="cz6-mU-D4x"/>
                             <constraint firstItem="i1Z-Sr-gZx" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="121.67" id="dAN-3x-nbH"/>
                             <constraint firstItem="qhv-qb-jdX" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" constant="100" id="wsd-Kn-XDl"/>
@@ -93,7 +75,6 @@
                     <connections>
                         <outlet property="financialButton" destination="i1Z-Sr-gZx" id="SPs-a6-mIF"/>
                         <outlet property="toDoButton" destination="eL6-1a-vZP" id="lHH-hd-3z9"/>
-                        <outlet property="workoutButton" destination="Itk-0d-IYH" id="KC8-44-HL9"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -137,7 +118,7 @@
                                                 <rect key="frame" x="0.0" y="300" width="322" height="50"/>
                                                 <subviews>
                                                     <stackView opaque="NO" contentMode="scaleToFill" spacing="30" translatesAutoresizingMaskIntoConstraints="NO" id="mfo-IA-mo3">
-                                                        <rect key="frame" x="13.666666666666657" y="7.6666666666666288" width="295" height="35"/>
+                                                        <rect key="frame" x="46" y="7.6666666666666288" width="230" height="35"/>
                                                         <subviews>
                                                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="jDD-d6-Put">
                                                                 <rect key="frame" x="0.0" y="0.0" width="35" height="35"/>
@@ -160,15 +141,8 @@
                                                                     <constraint firstAttribute="height" constant="35" id="xeA-Bv-fDb"/>
                                                                 </constraints>
                                                             </imageView>
-                                                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ZkD-FI-NIL">
-                                                                <rect key="frame" x="195" y="0.0" width="35" height="35"/>
-                                                                <constraints>
-                                                                    <constraint firstAttribute="width" constant="35" id="eCq-ev-aH2"/>
-                                                                    <constraint firstAttribute="height" constant="35" id="hzp-OI-mdT"/>
-                                                                </constraints>
-                                                            </imageView>
                                                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="LFW-Ju-uLg">
-                                                                <rect key="frame" x="260" y="0.0" width="35" height="35"/>
+                                                                <rect key="frame" x="195" y="0.0" width="35" height="35"/>
                                                                 <constraints>
                                                                     <constraint firstAttribute="width" constant="35" id="UVL-05-A9i"/>
                                                                     <constraint firstAttribute="height" constant="35" id="Uls-J0-D76"/>
@@ -294,7 +268,7 @@
                                 </constraints>
                             </view>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jy4-NZ-ros">
-                                <rect key="frame" x="30" y="756" width="140" height="35"/>
+                                <rect key="frame" x="131" y="756" width="140" height="35"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="35" id="PQe-6g-yEN"/>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="140" id="vKY-ud-qmd"/>
@@ -305,30 +279,15 @@
                                     <action selector="weeklyViewPressed:" destination="g8U-tG-Npb" eventType="touchUpInside" id="ITF-iC-YDR"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="J6A-gt-4LI">
-                                <rect key="frame" x="232" y="756" width="140" height="35"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="35" id="0Il-Xg-o5c"/>
-                                    <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="140" id="v5y-R6-L1I"/>
-                                </constraints>
-                                <state key="normal" title="Button"/>
-                                <buttonConfiguration key="configuration" style="filled" title="Monthly View"/>
-                                <connections>
-                                    <action selector="monthlyViewPressed:" destination="g8U-tG-Npb" eventType="touchUpInside" id="TQq-DM-dL8"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="pV6-fg-ztd"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="jy4-NZ-ros" firstAttribute="leading" secondItem="pV6-fg-ztd" secondAttribute="leading" constant="30" id="0yq-N7-YvP"/>
                             <constraint firstItem="pV6-fg-ztd" firstAttribute="bottom" secondItem="EoL-pL-9UJ" secondAttribute="bottom" constant="70" id="6Xp-jy-dJw"/>
                             <constraint firstItem="EoL-pL-9UJ" firstAttribute="leading" secondItem="pV6-fg-ztd" secondAttribute="leading" constant="20" id="KBM-dA-wH2"/>
                             <constraint firstItem="pV6-fg-ztd" firstAttribute="trailing" secondItem="EoL-pL-9UJ" secondAttribute="trailing" constant="20" id="Myv-9Y-x62"/>
                             <constraint firstItem="jy4-NZ-ros" firstAttribute="top" secondItem="EoL-pL-9UJ" secondAttribute="bottom" constant="20" id="Pud-Ov-uTd"/>
-                            <constraint firstItem="pV6-fg-ztd" firstAttribute="trailing" secondItem="J6A-gt-4LI" secondAttribute="trailing" constant="30" id="Pw6-DL-e4B"/>
-                            <constraint firstItem="J6A-gt-4LI" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="jy4-NZ-ros" secondAttribute="trailing" constant="53" id="dRQ-ht-heX"/>
-                            <constraint firstItem="J6A-gt-4LI" firstAttribute="top" secondItem="jy4-NZ-ros" secondAttribute="top" id="qv9-nu-2sR"/>
+                            <constraint firstItem="jy4-NZ-ros" firstAttribute="centerX" secondItem="0om-9d-F1r" secondAttribute="centerX" id="bFy-gJ-Jcz"/>
                             <constraint firstItem="EoL-pL-9UJ" firstAttribute="top" secondItem="pV6-fg-ztd" secondAttribute="top" id="rrQ-r0-smD"/>
                         </constraints>
                     </view>
@@ -343,8 +302,6 @@
                         <outlet property="currentLocationButton" destination="sWA-2W-4gt" id="IWR-i8-kNN"/>
                         <outlet property="datePicker" destination="Bdb-BL-OKt" id="fT0-wF-yYh"/>
                         <outlet property="iconContainer" destination="Eel-Ox-hJR" id="l3b-B4-7KK"/>
-                        <outlet property="imageIcon" destination="ZkD-FI-NIL" id="WRk-Fl-1N2"/>
-                        <outlet property="monthlyButton" destination="J6A-gt-4LI" id="5kk-Fz-J15"/>
                         <outlet property="numberListIcon" destination="jDD-d6-Put" id="ch2-Jc-VNI"/>
                         <outlet property="otherLocationButton" destination="0M9-O1-WUX" id="4uz-20-1Bd"/>
                         <outlet property="strikeThroughIcon" destination="LFW-Ju-uLg" id="iYF-qd-b5r"/>
@@ -360,7 +317,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="mGk-Gh-AOi" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1013.4328358208954" y="-188.10068649885582"/>
+            <point key="canvasLocation" x="897" y="242"/>
         </scene>
         <!--Financial Yearly View Controller-->
         <scene sceneID="ZdH-WZ-2u2">
@@ -559,7 +516,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="b59-tz-0QS" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2000" y="-631"/>
+            <point key="canvasLocation" x="2169" y="-563"/>
         </scene>
         <!--To Do Weekly ViewVC-->
         <scene sceneID="yPP-xk-0Vb">
@@ -590,7 +547,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="fIB-Ro-9Zm" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3083.5820895522388" y="-538.21510297482837"/>
+            <point key="canvasLocation" x="2993" y="-54"/>
         </scene>
         <!--To Do Monthly ViewVC-->
         <scene sceneID="EyU-Wk-5ea">
@@ -606,23 +563,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="af3-zj-KiP" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="3084" y="178"/>
-        </scene>
-        <!--Work Out View Controller-->
-        <scene sceneID="aNl-X0-KT5">
-            <objects>
-                <viewController id="sJh-wu-qNO" customClass="WorkOutViewController" customModule="Assistant_App" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="7yC-Y1-qMY">
-                        <rect key="frame" x="0.0" y="0.0" width="402" height="874"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <viewLayoutGuide key="safeArea" id="sb6-3m-aaR"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                    </view>
-                    <navigationItem key="navigationItem" id="ewh-yw-jeQ"/>
-                </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="3yK-na-68b" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="1015" y="549"/>
+            <point key="canvasLocation" x="2993" y="662"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="h7q-6j-aIS">
@@ -1292,22 +1233,22 @@
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>
         <systemColor name="systemBrownColor">
-            <color red="0.63529411759999999" green="0.51764705879999995" blue="0.36862745099999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.63529411764705879" green="0.51764705882352946" blue="0.36862745098039218" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGray4Color">
-            <color red="0.81960784310000001" green="0.81960784310000001" blue="0.83921568629999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.81960784313725488" green="0.81960784313725488" blue="0.83921568627450982" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGray5Color">
-            <color red="0.8980392157" green="0.8980392157" blue="0.91764705879999997" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.89803921568627454" green="0.89803921568627454" blue="0.91764705882352937" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemGray6Color">
-            <color red="0.94901960780000005" green="0.94901960780000005" blue="0.96862745100000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="0.94901960784313721" green="0.94901960784313721" blue="0.96862745098039216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemPinkColor">
-            <color red="1" green="0.1764705882" blue="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.17647058823529413" blue="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
         <systemColor name="systemRedColor">
-            <color red="1" green="0.23137254900000001" blue="0.18823529410000001" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <color red="1" green="0.23137254901960785" blue="0.18823529411764706" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
         </systemColor>
     </resources>
 </document>

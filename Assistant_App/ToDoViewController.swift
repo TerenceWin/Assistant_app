@@ -16,11 +16,10 @@ class TodoAttachment: NSTextAttachment {
     var type: String?
 }
 
-class ToDoViewController: UIViewController,  UIImagePickerControllerDelegate, UINavigationControllerDelegate{
+class ToDoViewController: UIViewController, UINavigationControllerDelegate{
     
     @IBOutlet weak var background : UIView!
     @IBOutlet weak var weeklyButton : UIButton!
-    @IBOutlet weak var monthlyButton : UIButton!
     @IBOutlet weak var titleLabel : UITextField!
     @IBOutlet weak var textFieldContainer : UIView!
     @IBOutlet weak var textfield : UITextView!
@@ -28,7 +27,6 @@ class ToDoViewController: UIViewController,  UIImagePickerControllerDelegate, UI
     @IBOutlet weak var numberListIcon : UIImageView!
     @IBOutlet weak var bulletListIcon : UIImageView!
     @IBOutlet weak var toDoListIcon : UIImageView!
-    @IBOutlet weak var imageIcon : UIImageView!
     @IBOutlet weak var strikeThroughIcon : UIImageView!
     @IBOutlet weak var datePicker : UIDatePicker!
     @IBOutlet weak var categoryScrollView : UIScrollView!
@@ -37,7 +35,6 @@ class ToDoViewController: UIViewController,  UIImagePickerControllerDelegate, UI
     @IBOutlet weak var currentLocationButton : UIButton!
     @IBOutlet weak var otherLocationButton: UIButton!
     @IBOutlet weak var addButton : UIButton!
-    let imagePicker = UIImagePickerController()
 
     
     private let categories = ["Personal", "Work", "School", "Home", "Relationship", "Family", "Finance", "Health"]
@@ -65,6 +62,7 @@ class ToDoViewController: UIViewController,  UIImagePickerControllerDelegate, UI
     var currentSelectedCategory : String? = ""
     var currentSelectedLocation : String? = ""
     var isStrikeThrough : Bool = false
+    var popBackItem : ToDoStruct?
     
     override func viewDidLoad(){
         super.viewDidLoad()
@@ -75,7 +73,6 @@ class ToDoViewController: UIViewController,  UIImagePickerControllerDelegate, UI
         setUpDatePicker()
         textfield.delegate = self
         titleLabel.delegate = self
-        imagePicker.delegate = self
         _ = textfield.layoutManager
     }
     
@@ -92,10 +89,11 @@ class ToDoViewController: UIViewController,  UIImagePickerControllerDelegate, UI
                  let allToDo = toDoManager.shared.allToDo
                 
                 var weeklyToDos : [Date: [ToDoStruct]] = [:]
-                let calendar = Calendar.current
                 
                 for todo in allToDo{
-                    if let weekDate = calendar.dateInterval(of: .weekOfYear, for: todo.date)?.start {
+                    var tempCalendar = Calendar.current
+                    tempCalendar.firstWeekday = 2
+                    if let weekDate = tempCalendar.dateInterval(of: .weekOfYear, for: todo.date)?.start {
                         weeklyToDos[weekDate, default: []].append(todo)
                     }
                 }
@@ -109,45 +107,124 @@ class ToDoViewController: UIViewController,  UIImagePickerControllerDelegate, UI
             if let destinationVC = segue.destination as? ToDoWeeklyViewVC{
                 destinationVC.weeklyToDos = (sender as? [Date: [ToDoStruct]] ?? [:])
             }
-        }else if segue.identifier == "goToToDoMonthlyView"{
-            //Pass in the YearlyToDo Data
         }
-    }
-    
-    @IBAction func monthlyViewPressed(_ sender: UIButton){
-        performSegue(withIdentifier: "goToToDoMonthlyView", sender: self)
     }
     
     @IBAction func dateChanged(_ sender: UIDatePicker){
         date = sender.date
     }
     
+    //MARK: - PopBackItem
+    func didSetPopBackItem(_ didSetPopBack: Bool){
+        if didSetPopBack{
+            taskTitle = popBackItem?.title ?? ""
+            taskTextField = popBackItem?.description ?? ""
+            date = popBackItem?.date ?? Date()
+            currentSelectedCategory = popBackItem?.category ?? ""
+            if let location = popBackItem?.location{
+                var temp = location
+                temp.append("?")
+                currentSelectedLocation = temp
+            }else{
+                currentSelectedLocation = ""
+            }
+            
+            titleLabel.textColor = UIColor.black
+            titleLabel.text = popBackItem?.title ?? ""
+            
+            textfield.textColor = UIColor.black
+            if let text = popBackItem?.description{
+                let originalText = getOriginalText(text)
+                textfield.attributedText = originalText
+            }else{
+                textfield.text = ""
+            }
+            
+            datePicker.date = popBackItem?.date ?? Date()
+            
+            for case let button as UIButton in categoryStackView.arrangedSubviews{
+                let isSelected = (button.configuration?.title == currentSelectedCategory)
+                var updateConfig = button.configuration
+                
+                if isSelected{
+                    updateConfig?.background.strokeColor = .darkGray
+                    updateConfig?.background.strokeWidth = 2.5
+                }else{
+                    updateConfig?.background.strokeColor = .clear
+                    updateConfig?.background.strokeWidth = 0.0
+                }
+                button.configuration = updateConfig
+            }
+            
+            for button in locationButtons{
+                let isSelected = (button.configuration?.title == currentSelectedLocation)
+                var config = button.configuration
+                
+                config?.background.strokeWidth = isSelected ? 2.0 : 0.0
+                config?.background.strokeColor = .darkGray
+                
+                button.configuration = config
+            }
+        }
+    }
+    
+    func getOriginalText(_ base64String: String) -> NSAttributedString? {
+        guard let rtfData = Data(base64Encoded: base64String) else{
+            print("Rtf -> String conversion failure")
+            return nil
+        }
+        guard let attributeFromRtf = try? NSMutableAttributedString(
+            data: rtfData,
+            options: [.documentType: NSAttributedString.DocumentType.rtf],
+            documentAttributes: nil
+        )else{
+            print("Failed to interpret RTF data")
+            return nil
+        }
+        
+        let mutable = attributeFromRtf
+        let tags = [
+            "[TODO_CHECKMARK]": "checkmark.circle",
+            "[TODO_CHECKMARK_FILL]": "checkmark.circle.fill"
+        ]
+        for (tag, imageName) in tags{
+            var range = (mutable.string as NSString).range(of: tag)
+            
+            while range.location != NSNotFound{
+                let attachment = TodoAttachment()
+                attachment.type = imageName
+                attachment.image = UIImage(systemName: imageName)
+                
+                let attachmentString = NSAttributedString(attachment: attachment)
+                mutable.replaceCharacters(in: range, with: attachmentString)
+                
+                range = (mutable.string as NSString).range(of: tag)
+            }
+        }
+        return mutable
+    }
     
     //MARK: - setUp UI
     func setBackgroundColor(){
         background.backgroundColor = UIColor(red: 249.0 / 255.0, green: 244.0 / 255.0, blue: 218.0 / 255.0, alpha: 1.0)
         background.layer.cornerRadius = 40.0
         textFieldContainer.backgroundColor = .white
-        textfield.text = "Task..."
     }
     
     func setupUIViews(){
         numberListIcon.image = UIImage(systemName: "list.number")
         bulletListIcon.image = UIImage(systemName: "list.bullet")
         toDoListIcon.image = UIImage(systemName: "checklist")
-        imageIcon.image = UIImage(systemName: "photo")
         strikeThroughIcon.image = UIImage(systemName: "pencil.slash")
         
         numberListIcon.tintColor = .gray
         bulletListIcon.tintColor = .gray
         toDoListIcon.tintColor = .gray
-        imageIcon.tintColor = .gray
         strikeThroughIcon.tintColor = .gray
         
         numberListIcon.isUserInteractionEnabled = true
         bulletListIcon.isUserInteractionEnabled = true
         toDoListIcon.isUserInteractionEnabled = true
-        imageIcon.isUserInteractionEnabled = true
         strikeThroughIcon.isUserInteractionEnabled = true
         
         let tapNumberListIcon = UITapGestureRecognizer(target: self, action: #selector(numberIconTapped))
@@ -159,9 +236,6 @@ class ToDoViewController: UIViewController,  UIImagePickerControllerDelegate, UI
         let tapToDoListIcon = UITapGestureRecognizer(target: self, action: #selector(toDoIconTapped))
         toDoListIcon.addGestureRecognizer(tapToDoListIcon)
         
-        let tapImageIcon = UITapGestureRecognizer(target: self, action: #selector(imageIconTapped))
-        imageIcon.addGestureRecognizer(tapImageIcon)
-        
         let tapStrikeThroughIcon = UITapGestureRecognizer(target: self, action: #selector(strikeThroughTapped))
         strikeThroughIcon.addGestureRecognizer(tapStrikeThroughIcon)
         
@@ -171,8 +245,7 @@ class ToDoViewController: UIViewController,  UIImagePickerControllerDelegate, UI
     func setUIForTextFields(){
         titleLabel.borderStyle = .none
         titleLabel.textColor = .darkGray
-        
-        
+        textfield.text = "Task..."
         
         textFieldContainer.layer.cornerRadius = 15.0
         textfield.textContainerInset = UIEdgeInsets(top: 10.0, left: 8.0, bottom: 10.0, right: 10.0)
@@ -229,7 +302,6 @@ class ToDoViewController: UIViewController,  UIImagePickerControllerDelegate, UI
                 forCharacterRange: NSRange(location: charIndex, length: 1)
             )
             txtView.selectedRange = currentSelectedRange
-        
     }
     
     //StringToAdd, Cursor location, lineRange = NSRange
@@ -286,7 +358,8 @@ class ToDoViewController: UIViewController,  UIImagePickerControllerDelegate, UI
         let currentLine = fullText.substring(with: lineRange)
         
         let attribute : [NSAttributedString.Key: Any] = [
-            .font: UIFont.systemFont(ofSize: 20.0, weight: .regular)        ]
+            .font: UIFont.systemFont(ofSize: 20.0, weight: .regular)
+        ]
         
         if currentLine.count > 0{
             //Add [\n • ]
@@ -328,7 +401,6 @@ class ToDoViewController: UIViewController,  UIImagePickerControllerDelegate, UI
             range = textfield.selectedRange
             addCheckMark(range: range)
         }
-
     }
     //checkmark.circle
     //checkmark.circle.fill
@@ -343,8 +415,7 @@ class ToDoViewController: UIViewController,  UIImagePickerControllerDelegate, UI
         todoAttachment.image = UIImage(systemName: "checkmark.circle")
         todoAttachment.bounds = CGRect(x: 0, y: -5, width: w, height: h)
                 
-        let todoAttribute = NSAttributedString(attachment: todoAttachment,
-                                                       attributes: [.font: UIFont.systemFont(ofSize: 20.0)])
+        let todoAttribute = NSAttributedString(attachment: todoAttachment, attributes: [.font: UIFont.systemFont(ofSize: 20.0)])
         
         let spaceAttribute = NSAttributedString(string: " ", attributes: [.font: UIFont.systemFont(ofSize: 20.0)])
         textfield.textStorage.insert(todoAttribute, at: location)
@@ -353,48 +424,6 @@ class ToDoViewController: UIViewController,  UIImagePickerControllerDelegate, UI
         location = location + 1
         
         textfield.selectedRange = NSRange(location: location, length: 0)
-    }
-
-    @objc func imageIconTapped(){
-        openImagePicker()
-    }
-    
-    func openImagePicker(){
-        imagePicker.sourceType = .photoLibrary
-        imagePicker.allowsEditing = true
-        
-        present(imagePicker, animated: true)
-    }
-    
-    func imagePickerController(_ sender: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]){
-        imagePicker.dismiss(animated: true)
-        guard let selectedImage = info[.editedImage] as? UIImage else {return}
-            
-        insertImageIntoTextView(selectedImage)
-    }
-    
-    func insertImageIntoTextView(_ image: UIImage){
-        textfield.becomeFirstResponder()
-        
-        let width = CGFloat(image.size.width) / 8.0
-        let height = CGFloat(image.size.height) / 8.0
-        
-        let attachment = NSTextAttachment()
-        attachment.image = image
-        attachment.bounds = CGRect(x: 0, y: 0, width: width, height: height)
-        
-        let imageString = NSAttributedString(attachment: attachment, attributes: [.font: UIFont.systemFont(ofSize: 20.0, weight: .regular)])
-        let mutableAttributedString = NSMutableAttributedString(attributedString: textfield.attributedText)
-        
-        let selectedRange = textfield.selectedRange
-        mutableAttributedString.insert(imageString, at: selectedRange.location)
-        
-        textfield.attributedText = mutableAttributedString
-        textfield.selectedRange = NSRange(location: selectedRange.location + 1, length: 0)
-    }
-    
-    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        imagePicker.dismiss(animated: true, completion: nil)
     }
     
     @objc func strikeThroughTapped(){
@@ -456,7 +485,6 @@ class ToDoViewController: UIViewController,  UIImagePickerControllerDelegate, UI
         if currentSelectedCategory != "" || currentSelectedCategory != nil{
             if currentSelectedCategory == tappedTitle{
                 currentSelectedCategory = ""
-                
             }else{
                 currentSelectedCategory = tappedTitle
             }
@@ -493,10 +521,7 @@ class ToDoViewController: UIViewController,  UIImagePickerControllerDelegate, UI
         
         config.attributedTitle = AttributedString("Weekly View", attributes: fontContainer)
         weeklyButton.configuration = config
-        
-        config.attributedTitle = AttributedString("Monthly View", attributes: fontContainer)
-        monthlyButton.configuration = config
-        
+                
         //Location Buttons
         let locationBgColor = UIColor(red: 209.0/255.0, green: 187.0/255.0, blue: 145.0/255.0, alpha: 1.0)
         var locationConfig = UIButton.Configuration.filled()
@@ -582,23 +607,26 @@ class ToDoViewController: UIViewController,  UIImagePickerControllerDelegate, UI
             overLayerView.appear(sender: self)
             
        }else{
-           let cleanedString = cleanTextView()
            let locationString = currentSelectedLocation?.dropLast()
            
-           if let data = try? cleanedString.data(
-               from: NSRange(location: 0, length: cleanedString.length),
-               documentAttributes: [.documentType: NSAttributedString.DocumentType.rtf]
-           ){
-               let base64String = data.base64EncodedString()
-               let todo = ToDoStruct(title: taskTitle!,
+           let cleanedString = cleanTextView()
+           do{
+               let rtfData = try cleanedString.data(
+                from: NSRange(location: 0, length: cleanedString.length),
+                documentAttributes: [.documentType: NSAttributedString.DocumentType.rtf]
+               )
+               let base64String = rtfData.base64EncodedString()
+               let todo = ToDoStruct(title: taskTitle ?? "NO TITLE",
                                      description: base64String,
                                      date: date,
-                                     category: currentSelectedCategory!,
-                                     location: String(locationString!))
-               
+                                     category: currentSelectedCategory ?? "",
+                                     location: String(locationString ?? "")
+                                     )
                toDoManager.shared.addToDo(todo){ [ weak self ] complete in
                    self?.handleCompletion(complete)
                }
+           }catch{
+               print("RTF conversion failed: \(error)")
            }
        }
     }
